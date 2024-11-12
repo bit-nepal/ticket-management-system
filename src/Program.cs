@@ -10,7 +10,7 @@ using tms.Services.Printer;
 var builder = WebApplication.CreateBuilder(args);
 // Load configuration
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-
+builder.Services.AddBlazorBootstrap();
 // bind StorageSettings with the json Section
 builder.Services.Configure<StorageSettings>(
     builder.Configuration.GetSection(ConfigurationKeys.StorageSettings));

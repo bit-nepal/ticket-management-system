@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <!-- <PackageReference Include="ESCPOS" Version="1.2.4" /> -->
+    <PackageReference Include="Blazor.Bootstrap" Version="3.1.1" />
     <PackageReference Include="ESCPOS_NET" Version="3.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
