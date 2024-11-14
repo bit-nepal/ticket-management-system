@@ -1,0 +1,12 @@
+@page "/ticket"
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+<Button Color="ButtonColor.Primary" @onclick="OnButtonClick">Click me</Button>
+@code {
+    private void OnButtonClick()
+    {
+        Console.WriteLine("Button clicked");
+    }
+}
