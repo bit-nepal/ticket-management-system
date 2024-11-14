@@ -56,7 +56,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
-
 // Map Razor components
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
