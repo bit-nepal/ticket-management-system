@@ -1,17 +1,21 @@
 using System.ComponentModel.DataAnnotations.Schema;
-
 namespace tms.Data;
+
 public class Ticket
 {
   [Column("id")]
   public int Id { get; set; }
+  public int TicketNo { get; set; }
+  public DateTime TimeStamp { get; set; }
+  public String NepaliDate { get; set; } = null!;
+  public String BarCodeData { get; set; } = null!;
+  public Nationality Nationality { get; set; }
+  public PersonType PersonType { get; set; }
+  public int NoOfPeople { get; set; }
+  public int TotalPrice { get; set; }
+  public List<AddOn> AddOns { get; set; } = new();
 
-  [Column("ticket_no")]
-  public string EntryNo { get; set; } = null!;
-
-  [Column("description")]
-  public string Description { get; set; } = null!;
-
-  [Column("time_period")]
-  public string? TimePeriod { get; set; }
+  public bool IsGroupVisit { get; set; }
+  public string? CustomText { get; set; }
+  public int GroupSize { get; set; }
 }
