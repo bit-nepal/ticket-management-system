@@ -4,9 +4,21 @@
 <h1>Hello, world!</h1>
 
 <Button Color="ButtonColor.Primary" @onclick="OnButtonClick">Click me</Button>
+<Card Style="width:18rem;">
+    <CardHeader>
+        Ticket Creation Form
+    </CardHeader>
+    <CardBody>
+        <CardTitle>Special title treatment</CardTitle>
+        <CardText>Ticket Type:</CardText>
+        <Button Color="ButtonColor.Primary" To="#" Type="ButtonType.Link">Go somewhere</Button>
+    </CardBody>
+</Card>
+
 @code {
     private void OnButtonClick()
     {
         Console.WriteLine("Button clicked");
     }
+}
 }
