@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using tms.Configuration;
 using Microsoft.Extensions.Options;
 using tms.Services.Printer;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 // Load configuration
@@ -31,7 +32,6 @@ builder.Services.AddDbContext<LocalDbContext>((serviceProvider, options) =>
 
 // Register storage services with necessary configuration parameters
 builder.Services.AddSingleton<IPrinterService, PrinterService>();
-builder.Services.AddSingleton<EscPosParser>();
 builder.Services.AddSingleton<SQLiteStorageService>();
 builder.Services.AddSingleton<OnlineDbStorageService>();
 builder.Services.AddSingleton<FileStorageService>(serviceProvider =>
@@ -42,6 +42,18 @@ builder.Services.AddSingleton<FileStorageService>(serviceProvider =>
 
 // Register the StorageFactory after registering individual storage services
 builder.Services.AddSingleton<StorageFactory>();
+
+//Ticket 
+builder.Services.AddSingleton<TicketService>();
+builder.Services.AddOptions<TicketPricingConfig>()
+    .Configure<IConfiguration>((settings, configuration) =>
+    {
+      var options = new JsonSerializerOptions();
+      options.Converters.Add(new EnumDictionaryConverter<Nationality, NationalityPricing>());
+      options.Converters.Add(new EnumDictionaryConverter<PersonType, int>());
+      options.Converters.Add(new EnumDictionaryConverter<AddOnType, int>());
+      configuration.GetSection(ConfigurationKeys.TicketSettings).Bind(settings);
+    });
 
 // Build and configure the web application
 var app = builder.Build();

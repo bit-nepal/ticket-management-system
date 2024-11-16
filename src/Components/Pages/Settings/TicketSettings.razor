@@ -1,0 +1,167 @@
+@page "/ticket-settings"
+@inject TicketService TicketService
+
+<h3>Settings</h3>
+
+@if (EditableConfig is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <EditForm Model="EditableConfig" OnValidSubmit="SaveSettings">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        @foreach (var nationality in EditableConfig.Nationalities)
+        {
+            <h4>@nationality.Key</h4>
+
+            <h5>Base Prices</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Person Type</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var basePrice in nationality.Value.BasePrices)
+                    {
+                        <tr>
+                            <td>@basePrice.PersonType</td>
+                            <td>
+                                <InputNumber @bind-Value="basePrice.Price" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <h5>Add-Ons</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Add-On Type</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var addOn in nationality.Value.AddOns)
+                    {
+                        <tr>
+                            <td>@addOn.AddOnType</td>
+                            <td>
+                                <InputNumber @bind-Value="addOn.Price" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </EditForm>
+}
+
+@code {
+    private EditableTicketPricingConfig? EditableConfig;
+
+    protected override async Task OnInitializedAsync()
+    {
+        EditableConfig = await Task.FromResult(LoadEditableConfig());
+    }
+
+    private EditableTicketPricingConfig LoadEditableConfig()
+    {
+        var coreConfig = TicketService.GetPricingConfig();
+
+        var editableConfig = new EditableTicketPricingConfig();
+
+        foreach (var (nationality, pricing) in coreConfig.Nationalities)
+        {
+            var editablePricing = new EditableNationalityPricing
+            {
+                BasePrices = pricing.BasePrice.Select(bp => new EditablePrice
+                {
+                    PersonType = bp.Key,
+                    Price = bp.Value
+                }).ToList(),
+                AddOns = pricing.AddOns.Select(addOn => new EditableAddOn
+                {
+                    AddOnType = addOn.Key,
+                    Price = addOn.Value
+                }).ToList()
+            };
+
+            editableConfig.Nationalities[nationality] = editablePricing;
+        }
+
+        return editableConfig;
+    }
+
+    
+
+
+private void SaveSettings()
+{
+    if (EditableConfig == null)
+    {
+        Console.WriteLine("EditableConfig is null!");
+        return;
+    }
+
+    var coreConfig = new TicketPricingConfig();
+
+    // Ensure Nationalities dictionary is initialized
+    if (coreConfig.Nationalities == null)
+    {
+        Console.WriteLine("Nationailities is nell creating one");
+        coreConfig.Nationalities = new Dictionary<Nationality, NationalityPricing>();
+    }
+
+    foreach (var (nationality, editablePricing) in EditableConfig.Nationalities)
+    {
+        if (editablePricing == null)
+        {
+            Console.WriteLine($"EditablePricing is null for nationality: {nationality}");
+            continue;
+        }
+
+        if (editablePricing.BasePrices == null)
+        {
+            Console.WriteLine($"BasePrices is null for nationality: {nationality}");
+        }
+        else if (editablePricing.BasePrices.Any(bp => bp == null))
+        {
+            Console.WriteLine($"BasePrices contains null entries for nationality: {nationality}");
+        }
+
+        if (editablePricing.AddOns == null)
+        {
+            Console.WriteLine($"AddOns is null for nationality: {nationality}");
+        }
+        else if (editablePricing.AddOns.Any(addOn => addOn == null))
+        {
+            Console.WriteLine($"AddOns contains null entries for nationality: {nationality}");
+        }
+
+        NationalityPricing n = new NationalityPricing
+        {
+            BasePrice = editablePricing.BasePrices?
+                            .Where(bp => bp != null)
+                            .ToDictionary(bp => bp.PersonType, bp => bp.Price)
+                        ?? new Dictionary<PersonType, int>(),
+            AddOns = editablePricing.AddOns?
+                        .Where(addOn => addOn != null)
+                        .ToDictionary(addOn => addOn.AddOnType, addOn => addOn.Price)
+                    ?? new Dictionary<AddOnType, int>()
+        };
+
+        coreConfig.Nationalities[nationality] = n;
+    }
+
+    TicketService.UpdatePricingConfig2(coreConfig);
+    Console.WriteLine("Settings saved successfully.");
+}
+}

@@ -6,22 +6,19 @@ using ESCPOS_NET.Utilities;
 
 public class PrinterService : IPrinterService
 {
-  private readonly EscPosParser _parser;
-  public PrinterService(EscPosParser parser)
+  public PrinterService()
   {
-    _parser = parser;
   }
 
   public void PrintText(string text)
   {
     Console.WriteLine("Printing : " + text);
     // Generate ESC/POS commands
-    var commands = _parser.GenerateCommands(text);
     // Send commands to printer (this may involve a method that directly sends raw data to a connected printer)
-    SendToPrinter(text, commands);
+    SendToPrinter(text);
   }
 
-  private async void SendToPrinter(String message, byte[] commands)
+  private async void SendToPrinter(String message)
   {
 
     var hostnameOrIp = "192.168.1.222";
