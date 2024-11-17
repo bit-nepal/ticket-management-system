@@ -3,6 +3,7 @@ namespace tms.Services.Printer;
 using ESCPOS_NET;
 using ESCPOS_NET.Emitters;
 using ESCPOS_NET.Utilities;
+using tms.Data;
 
 public class PrinterService : IPrinterService
 {
@@ -10,6 +11,10 @@ public class PrinterService : IPrinterService
   {
   }
 
+  public void PrintTicket(Ticket ticket)
+  {
+    Console.WriteLine("Printing Ticket : " + ticket.TicketNo);
+  }
   public void PrintText(string text)
   {
     Console.WriteLine("Printing : " + text);
