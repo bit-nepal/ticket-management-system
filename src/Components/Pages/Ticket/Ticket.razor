@@ -1,18 +1,19 @@
 @page "/ticket"
-<PageTitle>Home</PageTitle>
+@inject tms.Services.Printer.IPrinterService printerService;
+<PageTitle>Ticket Creation</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Create a Ticket</h1>
 
 <Card Style="width:18rem;">
     <CardHeader>
         Ticket Creation Form
     </CardHeader>
     <CardBody>
-
         <EditForm Model="@ticket" class="form-inline" OnValidSubmit="@HandleValidSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
+            <!-- Nationality Selection -->
             <div class="form-group mt-4">
                 <label for="Nationality" class="h5">Nationality:</label>
                 <InputSelect @bind-Value="ticket.Nationality">
@@ -23,7 +24,8 @@
                 </InputSelect>
             </div>
 
-            @if(ticket.Nationality == Nationality.Nepali)
+            <!-- Person Type for Nepali -->
+            @if (ticket.Nationality == Nationality.Nepali)
             {
                 <div class="form-group mt-4">
                     <label for="PersonType" class="h5">Person Type:</label>
@@ -36,12 +38,14 @@
                 </div>
             }
 
+            <!-- Group Visit Switch -->
             <div class="form-group mt-4">
                 <label for="GroupVisit" class="h5">Group Visit:</label>
-                <Switch @bind-Value="ticket.IsGroupVisit" />
+                <Switch @bind-Value="ticket.IsGroupVisit"/>
             </div>
 
-            @if (ticket.IsGroupVisit == true)
+            <!-- Group Visit Details -->
+            @if (ticket.IsGroupVisit)
             {
                 <div class="form-group mt-4">
                     <label for="NoOfPeople" class="h5">No. of People</label>
@@ -49,68 +53,89 @@
                 </div>
 
                 <div class="form-group mt-4">
-                    <label for="CustomText" class="h5">Group Name: </label>
+                    <label for="CustomText" class="h5">Group Name:</label>
                     <InputText @bind-Value="ticket.CustomText" Placeholder="Enter group name" />
                 </div>
             }
 
+            <!-- Add-On Selection -->
             <div class="form-group mt-4">
                 <label for="AddOn" class="h5">Add Ons:</label>
                 @foreach (var addonType in Enum.GetValues(typeof(AddOnType)).Cast<AddOnType>())
                 {
-                    // Find the existing AddOn or create a new one if it doesn't exist
-                    var currentAddon = ticket.AddOns.FirstOrDefault(a => a.AddOnType == addonType) ?? new AddOn { AddOnType = addonType };
-
+                    var currentAddon = GetOrCreateAddOn(addonType);
                     <div class="form-group mt-4">
-                        <label for="@addonType" class="h5">@addonType</label>
+                        <label for="@addonType" class="h5">@addonType  </label>
                         @if (ticket.IsGroupVisit)
                         {
                             <InputNumber TValue="int" @bind-Value="currentAddon.Quantity" class="form-control" />
                         }
-                        else{
-                            // <InputCheckbox @bind-Value="Convert.ToBoolean(currentAddon.Quantity)"></InputCheckbox>
+                        else
+                        {
+                            <InputCheckbox @bind-Value="currentAddon.IsSelected" class="form-check-input" />
                         }
-                            <!-- Ensure that the addon is in the list -->
-                            @if (!ticket.AddOns.Contains(currentAddon))
-                            {
-                                ticket.AddOns.Add(currentAddon);
-                            }
-                        </div>
-                    }
-                </div>
-    
+                    </div>
+                }
+            </div>
 
+            <!-- Submit Button -->
             <div class="d-grid gap-2 col-6 mx-auto mt-4">
-                <Button Type="ButtonType.Submit" Color="ButtonColor.Primary"> Submit </Button>
-            </div> 
-
+                <Button Type="ButtonType.Submit" Color="ButtonColor.Primary">Submit</Button>
+            </div>
         </EditForm>
-
     </CardBody>
 </Card>
 
+
+
 @code {
-    tms.Data.Ticket ticket = new tms.Data.Ticket()
+    tms.Data.Ticket ticket = new tms.Data.Ticket
+    {
+        AddOns = new List<AddOn>
         {
-            AddOns = new List<AddOn>
-            {
-            new AddOn { AddOnType = AddOnType.Camera },
-            new AddOn { AddOnType = AddOnType.VideoCamera }
-            }
-        };
+            new AddOn { AddOnType = AddOnType.Camera, Quantity = 0 },
+            new AddOn { AddOnType = AddOnType.VideoCamera, Quantity = 0 }
+        }
+    };
 
-    private async Task HandleValidSubmit() => PrintData();
+    private async Task HandleValidSubmit()
+    {
+        SanitizeTicketData();
+        PrintData();
+        printerService.PrintTicket(ticket);
+    }
 
-    private void PrintData(){
-        Console.WriteLine("Barcode data is:" + ticket.BarCodeData);
-        Console.WriteLine("Nationality is: " + ticket.Nationality);
-        Console.WriteLine("Barcode data is:" + ticket.PersonType);
-        Console.WriteLine("Is group visit?:" + ticket.IsGroupVisit);
-        Console.WriteLine("No. of people:" + ticket.NoOfPeople);
-        Console.WriteLine("Group Name:" + ticket.CustomText);
-        Console.WriteLine("No. of Camera:" + ticket.AddOns.First(x => x.AddOnType == AddOnType.Camera).Quantity);
-        Console.WriteLine("No. of Video Camera:" + ticket.AddOns.First(x => x.AddOnType == AddOnType.VideoCamera).Quantity);
+    private AddOn GetOrCreateAddOn(AddOnType type)
+    {
+        var addon = ticket.AddOns.FirstOrDefault(a => a.AddOnType == type);
+        if (addon == null)
+        {
+            addon = new AddOn { AddOnType = type };
+            ticket.AddOns.Add(addon);
+        }
+        return addon;
+    }
+    private void SanitizeTicketData()
+    {
+      if (ticket.Nationality != Nationality.Nepali) ticket.PersonType = PersonType.General;
+      foreach (var addon in ticket.AddOns)
+      {
+          if (!ticket.IsGroupVisit) addon.Quantity = addon.IsSelected ? 1 : 0;
+          else addon.Quantity = addon.Quantity > 0 ? addon.Quantity : 0;
+      }
+    }
+    private void PrintData()
+    {
+        Console.WriteLine("Nationality: " + ticket.Nationality);
+        Console.WriteLine("Person Type: " + ticket.PersonType);
+        Console.WriteLine("Group Visit: " + ticket.IsGroupVisit);
+        Console.WriteLine("No. of People: " + ticket.NoOfPeople);
+        Console.WriteLine("Group Name: " + ticket.CustomText);
 
-
+        foreach (var addon in ticket.AddOns)
+        {
+            Console.WriteLine($"Addon {addon.AddOnType}: Quantity = {addon.Quantity}");
+        }
     }
 }
+
