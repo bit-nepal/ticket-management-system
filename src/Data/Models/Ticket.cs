@@ -14,7 +14,6 @@ public class Ticket
   public int NoOfPeople { get; set; }
   public int TotalPrice { get; set; }
   public List<AddOn> AddOns { get; set; } = new();
-
   public bool IsGroupVisit { get; set; }
   public string? CustomText { get; set; }
   public int GroupSize { get; set; }
