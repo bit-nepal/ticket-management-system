@@ -3,9 +3,103 @@
 @inject tms.Services.StorageConfigurationService StorageConfigService
 @inject tms.Services.Printer.IPrinterService printerService
 
-<h3>Storage Settings</h3>
 
-<div>
+
+<div class="d-flex">
+    <div>
+        <h3>Storage Settings</h3>
+        <Card Style="width:18rem;" Class="">
+            <CardBody>
+                
+                <EditForm Model="@StorageConfigService" class="form-inline" OnValidSubmit="@HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="form-group mt-4">
+                        <label for="SQLitePath" class="h5">SQLite Database Path:</label>
+                        <div class="d-flex">
+                            <InputText class="form-control form-control-lg" @bind-Value="SQLitePath" placeholder="Enter SQLite DB Path" /> &nbsp; &nbsp;
+                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveSQLitePath"> Save </Button>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <label for="OnlineDBConnectionString" class="h5">Online DB Connection String:</label>
+                        <div class="d-flex">
+                            <InputText class="form-control form-control-lg" @bind-Value="RemoteDbConnectionString" placeholder="Enter Online DB Connection" />
+                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveRemoteDbConnectionString"> Save </Button>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4">                
+                        <label for="BackupFilePath" class="h5">Backup File Path:</label>
+                        <div class="d-flex">
+                            <InputText class="form-control form-control-lg" @bind-Value="LocalFileStoragePath" placeholder="Enter Backup File Path" />
+                            <Button Color="ButtonColor.Success" Outline="true" @onclick="SaveLocalFileStoragePath"> Save </Button>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <label for="PrintMessage" class="h5">Print:</label>
+                        <div class="d-flex">
+                            <InputText class="form-control form-control-lg" @bind-Value="message" placeholder="Enter message" />
+                            <Button Color="ButtonColor.Success" Outline="true" @onclick="PrintMessage"> Print </Button>
+                        </div>
+                    </div>
+                </EditForm>
+
+            </CardBody>
+        </Card>
+    </div>
+
+    <div>
+        <h3>Printer Settings</h3>
+        <Card Style="width:18rem;" Class="">
+            <CardBody>
+                
+                <EditForm Model="@StorageConfigService" class="form-inline" OnValidSubmit="@HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="form-group mt-4">
+                        <label for="SQLitePath" class="h5">IP Address:</label>
+                        <div class="d-flex">
+                            <InputText class="form-control form-control-lg" @bind-Value="SQLitePath" placeholder="Enter SQLite DB Path" /> &nbsp; &nbsp;
+                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveSQLitePath"> Save </Button>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <label for="OnlineDBConnectionString" class="h5">Port:</label>
+                        <div class="d-flex">
+                            <InputText class="form-control form-control-lg" @bind-Value="RemoteDbConnectionString" placeholder="Enter Online DB Connection" />
+                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveRemoteDbConnectionString"> Save </Button>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <label for="BackupFilePath" class="h5">Backup File Path:</label>
+                        <div class="d-flex">
+                            <InputText class="form-control form-control-lg" @bind-Value="LocalFileStoragePath" placeholder="Enter Backup File Path" />
+                            <Button Color="ButtonColor.Success" Outline="true" @onclick="SaveLocalFileStoragePath"> Save </Button>
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <label for="PrintMessage" class="h5">Print:</label>
+                        <div class="d-flex">
+                            <InputText class="form-control form-control-lg" @bind-Value="message" placeholder="Enter message" />
+                            <Button Color="ButtonColor.Success" Outline="true" @onclick="PrintMessage"> Print </Button>
+                        </div>
+                    </div>
+                </EditForm>
+
+            </CardBody>
+        </Card>
+    </div>
+</div>
+
+@* <div>
     <label>SQLite Database Path:</label>
     <input @bind="SQLitePath" placeholder="Enter SQLite DB Path" />
     <button @onclick="SaveSQLitePath">Save</button>
@@ -27,12 +121,27 @@
     <label>Print:</label>
     <input @bind="message" placeholder="Enter Message !!" />
     <button @onclick="PrintMessage">Print</button>
-</div>
+</div> *@
+
+
 @code {
     private string SQLitePath;
     private string RemoteDbConnectionString;
     private string LocalFileStoragePath;
     private string message;
+
+    private async Task HandleValidSubmit()
+    {
+        PrintData();
+    }
+
+    private void PrintData()
+    {
+        Console.WriteLine(SQLitePath);
+        Console.WriteLine(RemoteDbConnectionString);
+        Console.WriteLine(LocalFileStoragePath);
+        Console.WriteLine(message);
+    }
 
     protected override void OnInitialized()
     {
