@@ -5,7 +5,7 @@
 
 
 
-<div class="d-flex">
+<div class="d-flex justify-content-around">
     <div>
         <h3>Storage Settings</h3>
         <Card Style="width:18rem;" Class="">
@@ -26,7 +26,7 @@
                     <div class="form-group mt-4">
                         <label for="OnlineDBConnectionString" class="h5">Online DB Connection String:</label>
                         <div class="d-flex">
-                            <InputText class="form-control form-control-lg" @bind-Value="RemoteDbConnectionString" placeholder="Enter Online DB Connection" />
+                            <InputText class="form-control form-control-lg" @bind-Value="RemoteDbConnectionString" placeholder="Enter Online DB Connection" />&nbsp; &nbsp;
                             <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveRemoteDbConnectionString"> Save </Button>
                         </div>
                     </div>
@@ -34,7 +34,7 @@
                     <div class="form-group mt-4">                
                         <label for="BackupFilePath" class="h5">Backup File Path:</label>
                         <div class="d-flex">
-                            <InputText class="form-control form-control-lg" @bind-Value="LocalFileStoragePath" placeholder="Enter Backup File Path" />
+                            <InputText class="form-control form-control-lg" @bind-Value="LocalFileStoragePath" placeholder="Enter Backup File Path" />&nbsp; &nbsp;
                             <Button Color="ButtonColor.Success" Outline="true" @onclick="SaveLocalFileStoragePath"> Save </Button>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                     <div class="form-group mt-4">
                         <label for="PrintMessage" class="h5">Print:</label>
                         <div class="d-flex">
-                            <InputText class="form-control form-control-lg" @bind-Value="message" placeholder="Enter message" />
+                            <InputText class="form-control form-control-lg" @bind-Value="message" placeholder="Enter message" />&nbsp; &nbsp;
                             <Button Color="ButtonColor.Success" Outline="true" @onclick="PrintMessage"> Print </Button>
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                     <ValidationSummary />
 
                     <div class="form-group mt-4">
-                        <label for="SQLitePath" class="h5">IP Address:</label>
+                        <label for="IPAddress" class="h5">IP Address:</label>
                         <div class="d-flex">
                             <InputText class="form-control form-control-lg" @bind-Value="SQLitePath" placeholder="Enter SQLite DB Path" /> &nbsp; &nbsp;
                             <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveSQLitePath"> Save </Button>
@@ -70,33 +70,20 @@
                     </div>
 
                     <div class="form-group mt-4">
-                        <label for="OnlineDBConnectionString" class="h5">Port:</label>
+                        <label for="Port" class="h5">Port:</label>
                         <div class="d-flex">
-                            <InputText class="form-control form-control-lg" @bind-Value="RemoteDbConnectionString" placeholder="Enter Online DB Connection" />
+                            <InputText class="form-control form-control-lg" @bind-Value="RemoteDbConnectionString" placeholder="Enter Online DB Connection" /> &nbsp; &nbsp;
                             <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveRemoteDbConnectionString"> Save </Button>
                         </div>
                     </div>
-
-                    <div class="form-group mt-4">
-                        <label for="BackupFilePath" class="h5">Backup File Path:</label>
-                        <div class="d-flex">
-                            <InputText class="form-control form-control-lg" @bind-Value="LocalFileStoragePath" placeholder="Enter Backup File Path" />
-                            <Button Color="ButtonColor.Success" Outline="true" @onclick="SaveLocalFileStoragePath"> Save </Button>
-                        </div>
-                    </div>
-
-                    <div class="form-group mt-4">
-                        <label for="PrintMessage" class="h5">Print:</label>
-                        <div class="d-flex">
-                            <InputText class="form-control form-control-lg" @bind-Value="message" placeholder="Enter message" />
-                            <Button Color="ButtonColor.Success" Outline="true" @onclick="PrintMessage"> Print </Button>
-                        </div>
-                    </div>
                 </EditForm>
-
             </CardBody>
         </Card>
     </div>
+</div>
+<div class="d-flex justify-content-center">
+    <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveRemoteDbConnectionString"> Save All </Button> &nbsp; &nbsp;
+<Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveRemoteDbConnectionString"> Test </Button>
 </div>
 
 @* <div>

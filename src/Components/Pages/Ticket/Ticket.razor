@@ -2,7 +2,7 @@
 @inject tms.Services.Printer.IPrinterService printerService;
 <PageTitle>Ticket Creation</PageTitle>
 
-<h1>Create a Ticket</h1>
+@* <h1>Create a Ticket</h1>
 
 <Card Style="width:18rem;">
     <CardHeader>
@@ -84,7 +84,103 @@
             </div>
         </EditForm>
     </CardBody>
+</Card> *@
+
+<Card Style="width: 24rem; margin: auto; border-color: #6f42c1;">
+    <CardHeader class="bg-purple text-white text-center">
+        <h4>Ticket Creation Form</h4>
+    </CardHeader>
+    <CardBody>
+        <EditForm Model="@ticket" class="form-horizontal" OnValidSubmit="@HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <!-- Nationality Selection -->
+            <div class="form-group mb-3">
+                <label for="Nationality" class="form-label fw-bold">Nationality:</label>
+                <InputSelect class="form-control" @bind-Value="ticket.Nationality">
+                    @foreach (var nationality in Enum.GetValues(typeof(Nationality)))
+                    {
+                        <option value="@nationality">@nationality</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Person Type for Nepali -->
+            @if (ticket.Nationality == Nationality.Nepali)
+            {
+                <div class="form-group mb-3">
+                    <label for="PersonType" class="form-label fw-bold">Person Type:</label>
+                    <InputSelect class="form-control" @bind-Value="ticket.PersonType">
+                        @foreach (var person in Enum.GetValues(typeof(PersonType)))
+                        {
+                            <option value="@person">@person</option>
+                        }
+                    </InputSelect>
+                </div>
+            }
+
+            <!-- Group Visit Switch -->
+            <div class="form-group mb-3">
+                <label for="GroupVisit" class="form-label fw-bold d-block">Group Visit:</label>
+                <Switch @bind-Value="ticket.IsGroupVisit" class="form-check-input" />
+            </div>
+
+            <!-- Group Visit Details -->
+            @if (ticket.IsGroupVisit)
+            {
+                <div class="form-group mb-3">
+                    <label for="NoOfPeople" class="form-label fw-bold">No. of People:</label>
+                    <NumberInput TValue="int" class="form-control" @bind-Value="ticket.NoOfPeople" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="CustomText" class="form-label fw-bold">Group Name:</label>
+                    <InputText class="form-control" @bind-Value="ticket.CustomText" Placeholder="Enter group name" />
+                </div>
+            }
+
+            <!-- Add-On Selection -->
+            <div class="form-group mb-3">
+                <label for="AddOn" class="form-label fw-bold">Add Ons:</label>
+                @foreach (var addonType in Enum.GetValues(typeof(AddOnType)).Cast<AddOnType>())
+                {
+                    var currentAddon = GetOrCreateAddOn(addonType);
+                    <div class="form-group mb-2 d-flex align-items-center">
+                        <label for="@addonType" class="form-label fw-bold me-3">@addonType:</label>
+                        @if (ticket.IsGroupVisit)
+                        {
+                            <InputNumber TValue="int" class="form-control" @bind-Value="currentAddon.Quantity" />
+                        }
+                        else
+                        {
+                            <InputCheckbox class="form-check-input ms-1" @bind-Value="currentAddon.IsSelected" />
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid gap-2 mt-4">
+                <Button Type="ButtonType.Submit" Color="ButtonColor.Success" class="btn btn-lg" Style=" border-color: #6f42c1;">
+                    Submit
+                </Button>
+            </div>
+        </EditForm>
+    </CardBody>
 </Card>
+
+<!-- Custom CSS -->
+<style>
+    .bg-purple {
+        background-color: #712cf9 ;
+    }
+
+    .fw-bold {
+        font-weight: bold;
+    }
+</style>
+
 
 
 
