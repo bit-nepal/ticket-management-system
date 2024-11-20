@@ -1,5 +1,5 @@
 @page "/ticket"
-@inject tms.Services.Printer.IPrinterService printerService;
+@inject TicketService ticketService;
 <PageTitle>Ticket Creation</PageTitle>
 
 @* <h1>Create a Ticket</h1>
@@ -198,7 +198,7 @@
     {
         SanitizeTicketData();
         PrintData();
-        printerService.PrintTicket(ticket);
+        ticketService.FinalizeTicket(ticket);
     }
 
     private AddOn GetOrCreateAddOn(AddOnType type)

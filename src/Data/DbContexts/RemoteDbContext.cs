@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using tms.Data;
 
-public class LocalDbContext : DbContext
+public class RemoteDbContext : DbContext
 {
-  public LocalDbContext(DbContextOptions options) : base(options) { }
+  public RemoteDbContext(DbContextOptions options) : base(options) { }
   public DbSet<Ticket> Tickets { get; set; } = null!;
 }
