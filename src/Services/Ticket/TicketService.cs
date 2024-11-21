@@ -42,6 +42,7 @@ public class TicketService
     ticket.BarCodeData = "691420";
     // SaveTicketToDb(ticket);
     _printerService.PrintTicket(ticket);
+    // _printerService.PrintText("FFF");
   }
   public TicketPricingConfig GetPricingConfig()
   {

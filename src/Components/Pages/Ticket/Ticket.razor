@@ -214,6 +214,7 @@
     private void SanitizeTicketData()
     {
       if (ticket.Nationality != Nationality.Nepali) ticket.PersonType = PersonType.General;
+      if (!ticket.IsGroupVisit) ticket.NoOfPeople = 1;
       foreach (var addon in ticket.AddOns)
       {
           if (!ticket.IsGroupVisit) addon.Quantity = addon.IsSelected ? 1 : 0;
