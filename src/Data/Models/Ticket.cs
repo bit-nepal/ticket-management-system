@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.Extensions.Options;
+
 namespace tms.Data;
 
 public class Ticket

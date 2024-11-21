@@ -3,6 +3,7 @@ using tms.Utils;
 using tms.Components;
 using tms.Services.Storage;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using tms.Configuration;
 using Microsoft.Extensions.Options;
 using tms.Services.Printer;
@@ -29,6 +30,41 @@ builder.Services.AddDbContext<LocalDbContext>((serviceProvider, options) =>
   var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
   options.UseSqlite($"Data Source={storageSettings.SQLiteDbPath}");
 });
+builder.Services.AddDbContext<RemoteDbContext>((serviceProvider, options) =>
+{
+  var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
+  options.UseMySql(
+          storageSettings.RemoteDbConnectionString,
+          ServerVersion.AutoDetect(storageSettings.RemoteDbConnectionString),
+          mySqlOptions =>
+          {
+            mySqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 20,
+                maxRetryDelay: TimeSpan.FromSeconds(10),
+                errorNumbersToAdd: null
+            );
+          }
+        );
+}
+    );
+// builder.Services.AddDbContextFactory<RemoteDbContext>(
+//       (serviceProvider, options) =>
+//       {
+//         var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
+//         options.UseMySql(
+//             storageSettings.RemoteDbConnectionString,
+//             ServerVersion.AutoDetect(storageSettings.RemoteDbConnectionString),
+//             mySqlOptions =>
+//             {
+//               mySqlOptions.EnableRetryOnFailure(
+//                   maxRetryCount: 20,
+//                   maxRetryDelay: TimeSpan.FromSeconds(10),
+//                   errorNumbersToAdd: null
+//               );
+//             }
+//           );
+//       }
+//     );
 
 // Register storage services with necessary configuration parameters
 builder.Services.AddSingleton<IPrinterService, PrinterService>();
