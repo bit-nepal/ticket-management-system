@@ -1,0 +1,33 @@
+﻿@page "/verification"
+<h3>Verification</h3>
+
+<div class="form-group mb-3">
+    <label for="TicketVerification" class="form-label fw-bold d-block">Ticket verification:</label>
+    <Switch @bind-Value="@IsValid"/>
+</div>
+
+@if (IsValid)
+{
+    <Card Color="CardColor.Success" Class="mb-4" Style="width:18rem;">
+        <CardHeader>Valid</CardHeader>
+        <CardBody>
+            <CardTitle>The ticket is valid.</CardTitle>
+            <CardText>You can enter the premises.</CardText>
+            <CardText>N</CardText>
+        </CardBody>
+    </Card>
+}
+else
+{
+    <Card Color="CardColor.Danger" Class="mb-4" Style="width:18rem;">
+        <CardHeader>Invalid</CardHeader>
+        <CardBody>
+            <CardTitle>The ticket is invalid.</CardTitle>
+            <CardText>Sorry, you cannot enter. Please purchase new ticket to verify.</CardText>
+        </CardBody>
+    </Card>
+}
+
+@code {
+    private bool IsValid;
+}

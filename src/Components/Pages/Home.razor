@@ -3,14 +3,54 @@
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
+<Offcanvas @ref="offcanvas" Size="OffcanvasSize.Small" UseStaticBackdrop="true" style="width: 0px; height:0px;" />
 
 <Button Color="ButtonColor.Primary" @onclick="OnButtonClick">Click me</Button>
 <NavLink href="/ticket-settings">Ticket settings</NavLink>
 <NavLink href="/settings">Settings</NavLink>
 <NavLink href="/dashboard">Dashboard</NavLink>
+<NavLink href="/login">Login Page</NavLink>
+<NavLink href="/verification">Verification Page</NavLink>
+
 
 
 @code {
+    private Offcanvas? offcanvas;
+    private bool isLoading = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (offcanvas is not null)
+            {
+                await offcanvas.ShowAsync();
+            }
+            await OnPageLoadComplete();
+            // Simulate a task that completes after rendering
+        }
+    }
+
+    private async Task SimulatePageLoad()
+    {
+        // Simulate some delay to represent loading
+        await Task.Delay(500);
+        await OnPageLoadComplete();
+    }
+
+    private async Task OnPageLoadComplete()
+    {
+        isLoading = false;
+
+        if (offcanvas is not null)
+        {
+            await offcanvas.HideAsync();
+        }
+
+        // Ensure UI updates immediately
+        await InvokeAsync(StateHasChanged);
+    }
+
     private void OnButtonClick()
     {
         Console.WriteLine("Button clicked");
