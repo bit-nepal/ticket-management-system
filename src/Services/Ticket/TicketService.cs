@@ -38,11 +38,16 @@ public class TicketService
   public void FinalizeTicket(Ticket ticket)
   {
     ticket.TotalPrice = CalculateTotalPrice(ticket);
-    ticket.TicketNo = 69420;
-    ticket.BarCodeData = "691420";
-    // SaveTicketToDb(ticket);
-    _printerService.PrintTicket(ticket);
-    // _printerService.PrintText("FFF");
+    ticket.BarCodeData = GenerateTicketCode();
+    Console.WriteLine(GenerateTicketCode());
+    if (CreateTicket(ticket))
+    {
+      _printerService.PrintTicket(ticket);
+    }
+  }
+  public bool CreateTicket(Ticket ticket)
+  {
+    return true;
   }
   public TicketPricingConfig GetPricingConfig()
   {
@@ -92,4 +97,5 @@ public class TicketService
       Console.WriteLine($"Error saving configuration: {ex.Message}");
     }
   }
+  private string GenerateTicketCode() => Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
 }
