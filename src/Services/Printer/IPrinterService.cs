@@ -5,4 +5,6 @@ public interface IPrinterService
 {
   void PrintText(string text);
   void PrintTicket(Ticket ticket);
+  void Cut();
+  void Feed();
 }

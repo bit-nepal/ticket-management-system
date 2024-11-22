@@ -12,6 +12,8 @@ public static class ConfigurationKeys
 
   // ------------------ Printer ------------------ //
   public const string PrinterSettings = "PrinterSettings";
+  public const string PrinterHost = PrinterSettings + ":" + nameof(PrinterHost);
+  public const string PrinterPort = PrinterSettings + ":" + nameof(PrinterPort);
 
   //------------------- Ticket ----------------------//
   public const string TicketSettings = "TicketSettings";

@@ -106,8 +106,7 @@ public class PrinterService : IPrinterService
     ByteSplicer.Combine(
       e.CenterAlign(),
       e.PrintLine(text),
-      e.PrintLine(""),
-      e.FullCutAfterFeed(1)
+      e.PrintLine("")
     )
   );
   }
@@ -126,6 +125,46 @@ public class PrinterService : IPrinterService
     {
       Console.WriteLine($"addon {addon.AddOnType}: quantity = {addon.Quantity}");
     }
+  }
+
+  public async void Cut()
+  {
+    var hostnameOrIp = "192.168.1.222";
+    var port = 9100;
+    var printer = new ImmediateNetworkPrinter(
+        new ImmediateNetworkPrinterSettings()
+        {
+          ConnectionString = $"{hostnameOrIp}:{port}",
+          PrinterName = "TestPrinter"
+        }
+      );
+
+    var e = new EPSON();
+    await printer.WriteAsync(
+    ByteSplicer.Combine(
+          e.FullCut()
+      )
+    );
+  }
+  public async void Feed()
+  {
+    Console.WriteLine("Manually feeding");
+    var hostnameOrIp = "192.168.1.222";
+    var port = 9100;
+    var printer = new ImmediateNetworkPrinter(
+        new ImmediateNetworkPrinterSettings()
+        {
+          ConnectionString = $"{hostnameOrIp}:{port}",
+          PrinterName = "TestPrinter"
+        }
+      );
+
+    var e = new EPSON();
+    await printer.WriteAsync(
+    ByteSplicer.Combine(
+          e.PrintLine("")
+      )
+    );
   }
 
 }
