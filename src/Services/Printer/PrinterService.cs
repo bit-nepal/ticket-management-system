@@ -71,7 +71,7 @@ public class PrinterService : IPrinterService
       //
       e.LeftAlign(),
       e.PrintLine(ticket.CustomText is null ? "" : MARGIN + ticket.CustomText),
-      e.PrintLine(MARGIN + "Nationaility: " + ticket.Nationality),
+      e.PrintLine(MARGIN + "Nationality: " + ticket.Nationality),
       e.PrintLine(MARGIN + "No of People: " + ticket.NoOfPeople),
       e.PrintLine(MARGIN + "Camera :" + ticket.AddOns.First(x => x.AddOnType == AddOnType.Camera).Quantity),
       e.PrintLine(MARGIN + "Video Camera:" + ticket.AddOns.First(x => x.AddOnType == AddOnType.VideoCamera).Quantity),
