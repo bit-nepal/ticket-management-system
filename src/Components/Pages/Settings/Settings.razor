@@ -69,6 +69,14 @@
                             <Button Color="ButtonColor.Primary" Outline="true" @onclick="SetPrinterPort"> Save </Button>
                         </div>
                     </div>
+                  <div class="form-group mt-4">
+                        <label for="Com Port" class="h5">Port:</label>
+                        <div class="d-flex">
+                            <InputText class="form-control form-control-lg" @bind-Value="PrinterComPort" placeholder="Enter Com Port" /> &nbsp; &nbsp;
+                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SetPrinterComPort"> Save </Button>
+                        </div>
+                    </div>
+
 <div class="form-group mt-4">
                         <div class="d-flex">
                         <label for="IPAddress" class="h5">Test:</label>
@@ -76,6 +84,7 @@
                             <Button Color="ButtonColor.Success" Outline="true" @onclick="PrintMessage"> Print</Button> &nbsp;
                             <Button Color="ButtonColor.Success" Outline="true" @onclick="FeedPaper"> Feed</Button> &nbsp;
                             <Button Color="ButtonColor.Success" Outline="true" @onclick="CutPaper"> Cut</Button>
+                            <Switch @bind-Value="isLocalConnection" />
                         </div>&nbsp;
                     </div>
 
@@ -95,7 +104,9 @@
 
     private string PrinterHost;
     private int PrinterPort;
-
+    private string PrinterComPort;
+    
+    private bool isLocalConnection;
     private string message = "Hello World !!";
 
     private async Task HandleValidSubmit()
@@ -122,6 +133,7 @@
         PrinterHost= PrinterConfigService.GetHost();
         Console.WriteLine("Port: " +PrinterConfigService.GetPort()); 
         PrinterPort= PrinterConfigService.GetPort() ?? 0;
+        PrinterComPort= PrinterConfigService.GetComPort();
     }
 
     private void PrintMessage() => printerService.PrintText(message);
@@ -133,6 +145,7 @@
 
     private void SetPrinterHost() => PrinterConfigService.SetHost(PrinterHost);
     private void SetPrinterPort() => PrinterConfigService.SetPort(PrinterPort);
+    private void SetPrinterComPort() => PrinterConfigService.SetComPort(PrinterComPort);
 
     private void SaveAllSettings() {
       SaveSQLitePath() ;
@@ -141,5 +154,6 @@
 
       SetPrinterHost();
       SetPrinterPort();
+      printerService.SetPrinterMode(isLocalConnection);
     }
 }

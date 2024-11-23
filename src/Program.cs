@@ -115,4 +115,4 @@ app.MapRazorComponents<App>()
 
 app.Run();
 
-// BrowserHelper.OpenBrowser("https://localhost:5000");
+BrowserHelper.OpenBrowser("https://localhost:5000/ticket");

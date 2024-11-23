@@ -18,8 +18,10 @@ public class PrinterConfigurationService
   // public string? GetHost() => _printerSettings.Host;
   public string? GetHost() => _configuration[$"{ConfigurationKeys.PrinterSettings}:PrinterHost"];
   public int? GetPort() => int.TryParse(_configuration[$"{ConfigurationKeys.PrinterSettings}:PrinterPort"], out var port) ? port : null;
+  public string? GetComPort() => _configuration[$"{ConfigurationKeys.PrinterSettings}:PrinterComPort"];
 
   public void SetHost(string host) => UpdateConfig(ConfigurationKeys.PrinterHost, host);
+  public void SetComPort(string host) => UpdateConfig(ConfigurationKeys.PrinterComPort, host);
   public void SetPort(int port) => UpdateConfig(ConfigurationKeys.PrinterPort, Convert.ToString(port));
 
   private void UpdateConfig(string key, string value)

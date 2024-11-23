@@ -7,4 +7,5 @@ public interface IPrinterService
   void PrintTicket(Ticket ticket);
   void Cut();
   void Feed();
+  void SetPrinterMode(bool isLocalConnection);
 }
