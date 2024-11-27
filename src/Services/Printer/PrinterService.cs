@@ -122,7 +122,9 @@ public class PrinterService : IPrinterService
     Console.WriteLine("no. of people: " + ticket.NoOfPeople);
     Console.WriteLine("group name: " + ticket.CustomText);
     Console.WriteLine("Barcode: " + ticket.BarCodeData);
-    foreach (var addon in ticket.AddOns)
+    Console.WriteLine("Cost: " + ticket.TotalPrice);
+
+        foreach (var addon in ticket.AddOns)
     {
       Console.WriteLine($"addon {addon.AddOnType}: quantity = {addon.Quantity}");
     }
