@@ -1,6 +1,7 @@
 namespace tms.Services.Printer;
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 using ESCPOS_NET;
 using ESCPOS_NET.Emitters;
 using ESCPOS_NET.Utilities;
@@ -8,87 +9,58 @@ using tms.Data;
 
 public class PrinterService : IPrinterService
 {
-  public PrinterService()
+  private readonly PrinterConfigurationService _printerConfigService;
+  public PrinterService(PrinterConfigurationService printerConfigurationService)
   {
+    _printerConfigService = printerConfigurationService;
   }
 
   private string MARGIN = "   ";
+  public bool isLocalConnection { get; set; }
 
+  public void SetPrinterMode(bool isLocalConnection)
+  {
+    this.isLocalConnection = isLocalConnection;
+  }
   public async void PrintTicket(Ticket ticket)
   {
     printdata(ticket);
-    var hostnameOrIp = "192.168.1.222";
-    var port = 9100;
-    var printer = new ImmediateNetworkPrinter(
-        new ImmediateNetworkPrinterSettings()
-        {
-          ConnectionString = $"{hostnameOrIp}:{port}",
-          PrinterName = "TestPrinter"
-        }
-      );
-
-    var e = new EPSON();
-    await printer.WriteAsync(
-    ByteSplicer.Combine(
-      e.LeftAlign(),
-      // e.PrintQRCode("amrit-p.com.np", TwoDimensionCodeType.QRCODE_MICRO, Size2DCode.TINY),
-      e.CenterAlign(),
-      e.SetStyles(PrintStyle.Bold),
-      e.PrintLine("NATIONAL ART MUSEUM"),
-
-      e.SetStyles(PrintStyle.None),
-      e.PrintLine("Bhaktapur, Nepal"),
-      e.PrintLine(""),
-      e.PrintLine(""),
-      e.PrintLine(""),
-      e.PrintLine(""),
-      e.PrintLine(""),
-
-      // e.PrintImage(File.ReadAllBytes("images/pd-logo-300.png"), false, true),
-      // e.PrintLine(""),
-
-
-      e.PrintLine("ENTRANCE TICKET"),
-      e.PrintLine(""),
-      e.SetBarcodeHeightInDots(500),
-      e.SetBarWidth(BarWidth.Default),
-      e.SetBarLabelPosition(BarLabelPrintPosition.None),
-      e.PrintBarcode(BarcodeType.CODE128, ticket.BarCodeData == null ? "123456" : ticket.BarCodeData),
-      e.PrintLine(""),
-      e.PrintLine("Ticket No: " + ticket.TicketNo),
-      e.PrintLine(""),
-      e.PrintLine(""),
-      e.PrintLine(""),
-      e.PrintLine(""),
-      //
-      e.RightAlign(),
-      e.PrintLine("Date: " + DateTime.Now.ToString("dd MMMM yyyy") + MARGIN),
-      e.PrintLine("Time: " + DateTime.Now.ToString("t", DateTimeFormatInfo.InvariantInfo) + MARGIN),
-      e.PrintLine(""),
-      e.PrintLine(""),
-      e.PrintLine(""),
-      e.PrintLine(""),
-      //
-      e.LeftAlign(),
-      e.PrintLine(ticket.CustomText is null ? "" : MARGIN + ticket.CustomText),
-      e.PrintLine(MARGIN + "Nationaility: " + ticket.Nationality),
-      e.PrintLine(MARGIN + "No of People: " + ticket.NoOfPeople),
-      e.PrintLine(MARGIN + "Camera :" + ticket.AddOns.First(x => x.AddOnType == AddOnType.Camera).Quantity),
-      e.PrintLine(MARGIN + "Video Camera:" + ticket.AddOns.First(x => x.AddOnType == AddOnType.VideoCamera).Quantity),
-      e.PrintLine(MARGIN + "Entry Fee: " + ticket.TotalPrice + " NPR"),
-      e.PrintLine(""),
-      e.PrintLine(""),
-      e.PrintLine(""),
-      e.PrintLine(""),
-
-      e.CenterAlign(),
-      e.PrintLine(" c Hubizen Innovations"),
-      //
-      e.PrintLine(""),
-      e.FullCutAfterFeed(0)
-      )
-    );
+    if (!isLocalConnection)
+    {
+      Console.WriteLine("Printing Remotely");
+      var hostnameOrIp = _printerConfigService.GetHost();
+      var port = _printerConfigService.GetPort();
+      var printer = new ImmediateNetworkPrinter(
+          new ImmediateNetworkPrinterSettings()
+          {
+            ConnectionString = $"{hostnameOrIp}:{port}",
+            PrinterName = "TestPrinter"
+          }
+        );
+      await printer.WriteAsync(getTicketBytes(ticket));
+    }
+    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+    {
+      Console.WriteLine("Printing Locally on Windows");
+      var printer = new SerialPrinter(portName: _printerConfigService.GetComPort(), baudRate: 115200);
+      printer.Write(getTicketBytes(ticket));
+    }
+    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+    {
+      Console.WriteLine("Printing Locally Linux");
+      var printer = new FilePrinter(filePath: _printerConfigService.GetComPort());
+      printer.Write(getTicketBytes(ticket));
+    }
+    else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+    {
+      Console.WriteLine("Printing Locally OSX");
+    }
+    else
+    {
+      Console.WriteLine("ELSE");
+    }
   }
+
   public async void PrintText(string text)
   {
     Console.WriteLine("Printing : " + text);
@@ -106,8 +78,7 @@ public class PrinterService : IPrinterService
     ByteSplicer.Combine(
       e.CenterAlign(),
       e.PrintLine(text),
-      e.PrintLine(""),
-      e.FullCutAfterFeed(1)
+      e.PrintLine("")
     )
   );
   }
@@ -128,4 +99,96 @@ public class PrinterService : IPrinterService
     }
   }
 
+  public async void Cut()
+  {
+    var hostnameOrIp = "192.168.1.222";
+    var port = 9100;
+    var printer = new ImmediateNetworkPrinter(
+        new ImmediateNetworkPrinterSettings()
+        {
+          ConnectionString = $"{hostnameOrIp}:{port}",
+          PrinterName = "TestPrinter"
+        }
+      );
+
+    var e = new EPSON();
+    await printer.WriteAsync(
+    ByteSplicer.Combine(
+          e.FullCut()
+      )
+    );
+  }
+  public async void Feed()
+  {
+    Console.WriteLine("Manually feeding");
+    var hostnameOrIp = "192.168.1.222";
+    var port = 9100;
+    var printer = new ImmediateNetworkPrinter(
+        new ImmediateNetworkPrinterSettings()
+        {
+          ConnectionString = $"{hostnameOrIp}:{port}",
+          PrinterName = "TestPrinter"
+        }
+      );
+
+    var e = new EPSON();
+    await printer.WriteAsync(
+    ByteSplicer.Combine(
+          e.PrintLine("")
+      )
+    );
+  }
+
+  private byte[] getTicketBytes(Ticket ticket)
+  {
+    var e = new EPSON();
+    return ByteSplicer.Combine(
+     e.LeftAlign(),
+     // e.PrintQRCode("amrit-p.com.np", TwoDimensionCodeType.QRCODE_MICRO, Size2DCode.TINY),
+     e.CenterAlign(),
+     e.SetStyles(PrintStyle.Bold),
+     e.PrintLine("NATIONAL ART MUSEUM"),
+
+     e.SetStyles(PrintStyle.None),
+     e.PrintLine("Bhaktapur, Nepal"),
+     e.PrintLine(""),
+     e.PrintLine(""),
+
+     // e.PrintImage(File.ReadAllBytes("images/pd-logo-300.png"), false, true),
+     // e.PrintLine(""),
+
+     e.PrintLine("ENTRANCE TICKET"),
+     e.PrintLine(""),
+     e.SetBarcodeHeightInDots(250),
+     e.SetBarWidth(BarWidth.Default),
+     e.SetBarLabelPosition(BarLabelPrintPosition.None),
+     e.PrintBarcode(BarcodeType.CODE128, ticket.BarCodeData == null ? "123456" : ticket.BarCodeData),
+     e.PrintLine("Ticket No: " + ticket.TicketNo),
+     e.PrintLine(""),
+     //
+     e.RightAlign(),
+     e.PrintLine("Date: " + DateTime.Now.ToString("dd MMMM yyyy") + MARGIN),
+     e.PrintLine("Time: " + DateTime.Now.ToString("t", DateTimeFormatInfo.InvariantInfo) + MARGIN),
+     e.PrintLine(""),
+     e.PrintLine(""),
+     //
+     e.LeftAlign(),
+     // e.PrintLine(ticket.CustomText is null ? "" : MARGIN + ticket.CustomText),
+     e.PrintLine(MARGIN + "Name:" + ticket.CustomText),
+     e.PrintLine(MARGIN + "Nationality: " + ticket.Nationality),
+     e.PrintLine(MARGIN + "No of People: " + ticket.NoOfPeople),
+     e.PrintLine(MARGIN + "Camera:" + ticket.AddOns.First(x => x.AddOnType == AddOnType.Camera).Quantity),
+     e.PrintLine(MARGIN + "Video Camera:" + ticket.AddOns.First(x => x.AddOnType == AddOnType.VideoCamera).Quantity),
+     e.PrintLine(MARGIN + "Grand Total: NRs " + ticket.TotalPrice),
+     e.PrintLine(""),
+     e.PrintLine(""),
+
+     e.CenterAlign(),
+     e.SetStyles(PrintStyle.Proportional),
+     e.PrintLine(" c Hubizen Innovations"),
+     //
+     e.PrintLine(""),
+     e.FullCutAfterFeed(0)
+   );
+  }
 }

@@ -1,5 +1,5 @@
 ﻿@page "/"
-@using BlazorBootstrap;
+@inject NavigationManager NavigationManager
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
@@ -22,6 +22,7 @@
     {
         if (firstRender)
         {
+            NavigationManager.NavigateTo("ticket");
             if (offcanvas is not null)
             {
                 await offcanvas.ShowAsync();

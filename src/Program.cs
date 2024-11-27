@@ -13,9 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Load configuration
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 builder.Services.AddBlazorBootstrap();
+
 // bind StorageSettings with the json Section
 builder.Services.Configure<StorageSettings>(
     builder.Configuration.GetSection(ConfigurationKeys.StorageSettings));
+// bind PrinterSettings with the json Section
+builder.Services.Configure<PrinterSettings>(
+    builder.Configuration.GetSection(ConfigurationKeys.PrinterSettings));
 
 // Register Razor components
 builder.Services.AddRazorComponents()
@@ -23,6 +27,7 @@ builder.Services.AddRazorComponents()
 
 // Register the storage configuration service
 builder.Services.AddSingleton<StorageConfigurationService>();
+builder.Services.AddSingleton<PrinterConfigurationService>();
 
 // Register SQLite DbContext for local database with EF Core
 builder.Services.AddDbContext<LocalDbContext>((serviceProvider, options) =>
@@ -110,4 +115,4 @@ app.MapRazorComponents<App>()
 
 app.Run();
 
-// BrowserHelper.OpenBrowser("https://localhost:5000");
+BrowserHelper.OpenBrowser("https://localhost:5000/ticket");

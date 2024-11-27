@@ -1,9 +1,8 @@
 @page "/settings"
 @rendermode InteractiveServer
 @inject tms.Services.StorageConfigurationService StorageConfigService
+@inject tms.Services.PrinterConfigurationService PrinterConfigService
 @inject tms.Services.Printer.IPrinterService printerService
-
-
 
 <div class="d-flex justify-content-around">
     <div>
@@ -39,14 +38,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group mt-4">
-                        <label for="PrintMessage" class="h5">Print:</label>
-                        <div class="d-flex">
-                            <InputText class="form-control form-control-lg" @bind-Value="message" placeholder="Enter message" />&nbsp; &nbsp;
-                            <Button Color="ButtonColor.Success" Outline="true" @onclick="PrintMessage"> Print </Button>
-                        </div>
-                    </div>
-                </EditForm>
+                  </EditForm>
 
             </CardBody>
         </Card>
@@ -61,61 +53,61 @@
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
+
                     <div class="form-group mt-4">
-                        <label for="IPAddress" class="h5">IP Address:</label>
+                        <label for="Port" class="h5">IP Address:</label>
                         <div class="d-flex">
-                            <InputText class="form-control form-control-lg" @bind-Value="SQLitePath" placeholder="Enter SQLite DB Path" /> &nbsp; &nbsp;
-                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveSQLitePath"> Save </Button>
+                            <InputText class="form-control form-control-lg" @bind-Value="PrinterHost" placeholder="Enter HostName or IpAddress" /> &nbsp; &nbsp;
+                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SetPrinterHost"> Save </Button>
                         </div>
                     </div>
 
                     <div class="form-group mt-4">
-                        <label for="Port" class="h5">Port:</label>
+                        <label for="IPAddress" class="h5">Port:</label>
                         <div class="d-flex">
-                            <InputText class="form-control form-control-lg" @bind-Value="RemoteDbConnectionString" placeholder="Enter Online DB Connection" /> &nbsp; &nbsp;
-                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveRemoteDbConnectionString"> Save </Button>
+                            <InputNumber class="form-control form-control-lg" @bind-Value="PrinterPort" placeholder="Enter Port" /> &nbsp; &nbsp;
+                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SetPrinterPort"> Save </Button>
                         </div>
                     </div>
-                </EditForm>
+                  <div class="form-group mt-4">
+                        <label for="Com Port" class="h5">Port:</label>
+                        <div class="d-flex">
+                            <InputText class="form-control form-control-lg" @bind-Value="PrinterComPort" placeholder="Enter Com Port" /> &nbsp; &nbsp;
+                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SetPrinterComPort"> Save </Button>
+                        </div>
+                    </div>
+
+<div class="form-group mt-4">
+                        <div class="d-flex">
+                        <label for="IPAddress" class="h5">Test:</label>
+                            <InputText hidden class="form-control form-control-lg" @bind-Value="message" placeholder="Enter message" />&nbsp; &nbsp;
+                            <Button Color="ButtonColor.Success" Outline="true" @onclick="PrintMessage"> Print</Button> &nbsp;
+                            <Button Color="ButtonColor.Success" Outline="true" @onclick="FeedPaper"> Feed</Button> &nbsp;
+                            <Button Color="ButtonColor.Success" Outline="true" @onclick="CutPaper"> Cut</Button>
+                            <Switch @bind-Value="isLocalConnection" />
+                        </div>&nbsp;
+                    </div>
+
+                                    </EditForm>
             </CardBody>
         </Card>
     </div>
 </div>
 <div class="d-flex justify-content-center">
-    <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveRemoteDbConnectionString"> Save All </Button> &nbsp; &nbsp;
+    <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveAllSettings"> Save All </Button> &nbsp; &nbsp;
 <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveRemoteDbConnectionString"> Test </Button>
 </div>
-
-@* <div>
-    <label>SQLite Database Path:</label>
-    <input @bind="SQLitePath" placeholder="Enter SQLite DB Path" />
-    <button @onclick="SaveSQLitePath">Save</button>
-</div>
-
-<div>
-    <label>Online DB Connection String:</label>
-    <input @bind="RemoteDbConnectionString" placeholder="Enter Online DB Connection" />
-    <button @onclick="SaveRemoteDbConnectionString">Save</button>
-</div>
-
-<div>
-    <label>Backup File Path:</label>
-    <input @bind="LocalFileStoragePath" placeholder="Enter Backup File Path" />
-    <button @onclick="SaveLocalFileStoragePath">Save</button>
-</div>
-
-<div>
-    <label>Print:</label>
-    <input @bind="message" placeholder="Enter Message !!" />
-    <button @onclick="PrintMessage">Print</button>
-</div> *@
-
-
 @code {
     private string SQLitePath;
     private string RemoteDbConnectionString;
     private string LocalFileStoragePath;
-    private string message;
+
+    private string PrinterHost;
+    private int PrinterPort;
+    private string PrinterComPort;
+    
+    private bool isLocalConnection;
+    private string message = "Hello World !!";
 
     private async Task HandleValidSubmit()
     {
@@ -135,10 +127,33 @@
         SQLitePath = StorageConfigService.GetSQLiteDbPath();
         RemoteDbConnectionString = StorageConfigService.GetRemoteDbConnectionString();
         LocalFileStoragePath = StorageConfigService.GetLocalFileStoragePath();
+        
+        
+        Console.WriteLine("Host: " +PrinterConfigService.GetHost()); 
+        PrinterHost= PrinterConfigService.GetHost();
+        Console.WriteLine("Port: " +PrinterConfigService.GetPort()); 
+        PrinterPort= PrinterConfigService.GetPort() ?? 0;
+        PrinterComPort= PrinterConfigService.GetComPort();
     }
 
     private void PrintMessage() => printerService.PrintText(message);
+    private void FeedPaper() => printerService.Feed();
+    private void CutPaper() => printerService.Cut();
     private void SaveSQLitePath() => StorageConfigService.SetSQLiteDbPath(SQLitePath);
     private void SaveRemoteDbConnectionString() => StorageConfigService.SetRemoteDbConnectionString(RemoteDbConnectionString);
     private void SaveLocalFileStoragePath() => StorageConfigService.SetLocalFileStoragePath(LocalFileStoragePath);
+
+    private void SetPrinterHost() => PrinterConfigService.SetHost(PrinterHost);
+    private void SetPrinterPort() => PrinterConfigService.SetPort(PrinterPort);
+    private void SetPrinterComPort() => PrinterConfigService.SetComPort(PrinterComPort);
+
+    private void SaveAllSettings() {
+      SaveSQLitePath() ;
+      SaveRemoteDbConnectionString();
+      SaveLocalFileStoragePath();
+
+      SetPrinterHost();
+      SetPrinterPort();
+      printerService.SetPrinterMode(isLocalConnection);
+    }
 }
