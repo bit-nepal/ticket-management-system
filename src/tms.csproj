@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\9342343-XOPMUXRJ-7.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- <PackageReference Include="ESCPOS" Version="1.2.4" /> -->
     <PackageReference Include="Blazor.Bootstrap" Version="3.1.1" />
     <PackageReference Include="ESCPOS_NET" Version="3.0.0" />
