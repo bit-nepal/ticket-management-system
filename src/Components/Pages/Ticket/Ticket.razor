@@ -90,21 +90,21 @@
 <!-- Custom CSS -->
 <style>
     .bg-purple {
-        background-color: #712cf9 ;
+    background-color: blue ;
     }
 
     .fw-bold {
-        font-weight: bold;
+    font-weight: bold;
     }
 
     .my-card-container {
-        padding: 15px;
-        margin: auto;
-        background-color: white;
-        border-radius: 15px;
-        border: none;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-        width: 24rem;
+    padding: 15px;
+    margin: auto;
+    background-color: white;
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    width: 24rem;
     }
 </style>
 
@@ -124,6 +124,7 @@
         SanitizeTicketData();
         PrintData();
         ticketService.FinalizeTicket(ticket);
+        ClearForm();
     }
 
     private AddOn GetOrCreateAddOn(AddOnType type)
@@ -158,6 +159,18 @@
         {
             Console.WriteLine($"Addon {addon.AddOnType}: Quantity = {addon.Quantity}");
         }
+    }
+
+    private void ClearForm()
+    {
+        ticket = new tms.Data.Ticket
+            {
+                AddOns = new List<AddOn>
+        {
+            new AddOn { AddOnType = AddOnType.Camera, Quantity = 0 },
+            new AddOn { AddOnType = AddOnType.VideoCamera, Quantity = 0 }
+        }
+            };
     }
 }
 
