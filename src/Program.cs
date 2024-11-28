@@ -26,8 +26,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 // Register the storage configuration service
-builder.Services.AddSingleton<StorageConfigurationService>();
-builder.Services.AddSingleton<PrinterConfigurationService>();
+builder.Services.AddScoped<StorageConfigurationService>();
+builder.Services.AddScoped<PrinterConfigurationService>();
 
 // Register SQLite DbContext for local database with EF Core
 builder.Services.AddDbContext<LocalDbContext>((serviceProvider, options) =>
@@ -72,20 +72,20 @@ builder.Services.AddDbContext<RemoteDbContext>((serviceProvider, options) =>
 //     );
 
 // Register storage services with necessary configuration parameters
-builder.Services.AddSingleton<IPrinterService, PrinterService>();
-builder.Services.AddSingleton<SQLiteStorageService>();
-builder.Services.AddSingleton<OnlineDbStorageService>();
-builder.Services.AddSingleton<FileStorageService>(serviceProvider =>
+builder.Services.AddScoped<IPrinterService, PrinterService>();
+builder.Services.AddScoped<SQLiteStorageService>();
+builder.Services.AddScoped<OnlineDbStorageService>();
+builder.Services.AddScoped<FileStorageService>(serviceProvider =>
 {
   var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
   return new FileStorageService(storageSettings.LocalFileStoragePath);
 });
 
 // Register the StorageFactory after registering individual storage services
-builder.Services.AddSingleton<StorageFactory>();
+builder.Services.AddScoped<StorageFactory>();
 
 //Ticket 
-builder.Services.AddSingleton<TicketService>();
+builder.Services.AddScoped<TicketService>();
 builder.Services.AddOptions<TicketPricingConfig>()
     .Configure<IConfiguration>((settings, configuration) =>
     {
@@ -115,4 +115,4 @@ app.MapRazorComponents<App>()
 
 app.Run();
 
-BrowserHelper.OpenBrowser("https://localhost:5000/ticket");
+// BrowserHelper.OpenBrowser("https://localhost:5000/ticket");
