@@ -161,6 +161,10 @@ public class PrinterService : IPrinterService
 
      e.PrintLine("ENTRANCE TICKET"),
      e.PrintLine(""),
+     e.PrintLine("[ ]  Painting  Section "),
+     e.PrintLine("[ ] Woodcraft  Section "),
+     e.PrintLine("[ ] Metalcraft Section "),
+     e.PrintLine(""),
      e.SetBarcodeHeightInDots(250),
      e.SetBarWidth(BarWidth.Default),
      e.SetBarLabelPosition(BarLabelPrintPosition.None),
@@ -181,13 +185,13 @@ public class PrinterService : IPrinterService
      e.PrintLine(MARGIN + "No of People: " + ticket.NoOfPeople),
      e.PrintLine(MARGIN + "Camera:" + ticket.AddOns.First(x => x.AddOnType == AddOnType.Camera).Quantity),
      e.PrintLine(MARGIN + "Video Camera:" + ticket.AddOns.First(x => x.AddOnType == AddOnType.VideoCamera).Quantity),
-     e.PrintLine(MARGIN + "Grand Total: NRs " + ticket.TotalPrice),
+     e.PrintLine(MARGIN + "Grand Total: Rs " + ticket.TotalPrice),
      e.PrintLine(""),
      e.PrintLine(""),
 
      e.CenterAlign(),
-     e.SetStyles(PrintStyle.Proportional),
-     e.PrintLine(" c Hubizen Innovations"),
+     e.SetStyles(PrintStyle.Condensed),
+     e.PrintLine("(c) Hubizen Innovations"),
      //
      e.PrintLine(""),
      e.FullCutAfterFeed(0)
