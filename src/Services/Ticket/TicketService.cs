@@ -8,16 +8,16 @@ public class TicketService
 {
   private TicketPricingConfig _pricingConfig;
   private IPrinterService _printerService;
-  private LocalDbContext _localDbContext;
+  // private LocalDbContext _localDbContext;
 
   public TicketService(
       IOptions<TicketPricingConfig> pricingConfig,
-      IPrinterService printerService,
-      LocalDbContext localDbContext)
+      IPrinterService printerService)
+  // LocalDbContext localDbContext)
   {
     _pricingConfig = pricingConfig.Value;
     _printerService = printerService;
-    _localDbContext = localDbContext;
+    // _localDbContext = localDbContext;
   }
 
   public int GetBaseTicketPrice(Nationality nationality, PersonType personType)
@@ -52,7 +52,7 @@ public class TicketService
   }
   public bool CreateTicket(Ticket ticket)
   {
-    _localDbContext.Add(ticket);
+    // _localDbContext.Add(ticket);
     return true;
   }
   public TicketPricingConfig GetPricingConfig()

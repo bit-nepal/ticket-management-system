@@ -95,7 +95,7 @@ public class PrinterService : IPrinterService
     Console.WriteLine("Barcode: " + ticket.BarCodeData);
     Console.WriteLine("Cost: " + ticket.TotalPrice);
 
-        foreach (var addon in ticket.AddOns)
+    foreach (var addon in ticket.AddOns)
     {
       Console.WriteLine($"addon {addon.AddOnType}: quantity = {addon.Quantity}");
     }
@@ -155,15 +155,20 @@ public class PrinterService : IPrinterService
      e.PrintLine("Bhaktapur, Nepal"),
      e.PrintLine(""),
      e.PrintLine(""),
+     e.PrintLine(""),
 
      // e.PrintImage(File.ReadAllBytes("images/pd-logo-300.png"), false, true),
      // e.PrintLine(""),
 
+     e.SetStyles(PrintStyle.Bold),
      e.PrintLine("ENTRANCE TICKET"),
+     e.SetStyles(PrintStyle.None),
+     e.PrintLine(""),
      e.PrintLine(""),
      e.PrintLine("[ ]  Painting  Section "),
      e.PrintLine("[ ] Woodcraft  Section "),
      e.PrintLine("[ ] Metalcraft Section "),
+     e.PrintLine(""),
      e.PrintLine(""),
      e.SetBarcodeHeightInDots(250),
      e.SetBarWidth(BarWidth.Default),
@@ -171,29 +176,42 @@ public class PrinterService : IPrinterService
      e.PrintBarcode(BarcodeType.CODE128, ticket.BarCodeData == null ? "123456" : ticket.BarCodeData),
      e.PrintLine("Ticket No: " + ticket.TicketNo),
      e.PrintLine(""),
+     e.PrintLine(""),
      //
      e.RightAlign(),
      e.PrintLine("Date: " + DateTime.Now.ToString("dd MMMM yyyy") + MARGIN),
      e.PrintLine("Time: " + DateTime.Now.ToString("t", DateTimeFormatInfo.InvariantInfo) + MARGIN),
      e.PrintLine(""),
      e.PrintLine(""),
+     e.PrintLine(""),
      //
      e.LeftAlign(),
      // e.PrintLine(ticket.CustomText is null ? "" : MARGIN + ticket.CustomText),
      e.PrintLine(MARGIN + "Name:" + ticket.CustomText),
-     e.PrintLine(MARGIN + "Nationality: " + ticket.Nationality),
+
+     e.Print(MARGIN + "Nationality: "),
+     e.Print(ticket.Nationality == Nationality.SAARCMember ? "SAARC Member" : ticket.Nationality + ""),
+     e.PrintLine(ticket.Nationality == Nationality.Nepali ? " " + ticket.PersonType : ""),
+
      e.PrintLine(MARGIN + "No of People: " + ticket.NoOfPeople),
      e.PrintLine(MARGIN + "Camera:" + ticket.AddOns.First(x => x.AddOnType == AddOnType.Camera).Quantity),
      e.PrintLine(MARGIN + "Video Camera:" + ticket.AddOns.First(x => x.AddOnType == AddOnType.VideoCamera).Quantity),
-     e.PrintLine(MARGIN + "Grand Total: Rs " + ticket.TotalPrice),
+     e.PrintLine(MARGIN + "Entrance Fee: Rs " + ticket.TotalPrice),
+     e.PrintLine(""),
+     e.PrintLine(""),
      e.PrintLine(""),
      e.PrintLine(""),
 
      e.CenterAlign(),
      e.SetStyles(PrintStyle.Condensed),
-     e.PrintLine("(c) Hubizen Innovations"),
+     e.PrintLine("(c) Hubizen"),
      //
      e.PrintLine(""),
+     e.FullCutAfterFeed(0),
+
+     e.LeftAlign(),
+     e.PrintLine(MARGIN + "Ticket No: " + ticket.TicketNo),
+     e.PrintLine(MARGIN + "Entrance Fee: Rs " + ticket.TotalPrice),
      e.FullCutAfterFeed(0)
    );
   }
