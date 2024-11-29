@@ -1,9 +1,8 @@
 using tms.Services;
+using tms.Data.Context;
 using tms.Utils;
-using tms.Components;
 using tms.Services.Storage;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using tms.Configuration;
 using Microsoft.Extensions.Options;
 using tms.Services.Printer;
@@ -32,30 +31,31 @@ builder.Services.AddScoped<PrinterConfigurationService>();
 // Register SQLite DbContext for local database with EF Core
 builder.Services.AddDbContext<LocalDbContext>((serviceProvider, options) =>
 {
-  var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
-  string connString = $"Data Source={storageSettings.SQLiteDbPath}";
+  // var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
+  // string connString = $"Data Source={storageSettings.SQLiteDbPath}";
+  string connString = "Data Source=app.db";
   Console.WriteLine("------------------------------------");
   Console.WriteLine(connString);
   options.UseSqlite(connString);
   // options.UseSqlite($"Data Source=tmssqlite.db;");
 });
-builder.Services.AddDbContext<RemoteDbContext>((serviceProvider, options) =>
-{
-  var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
-  options.UseMySql(
-          storageSettings.RemoteDbConnectionString,
-          ServerVersion.AutoDetect(storageSettings.RemoteDbConnectionString),
-          mySqlOptions =>
-          {
-            mySqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 20,
-                maxRetryDelay: TimeSpan.FromSeconds(10),
-                errorNumbersToAdd: null
-            );
-          }
-        );
-}
-    );
+
+// builder.Services.AddDbContext<RemoteDbContext>((serviceProvider, options) =>
+// {
+//   var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
+//   options.UseMySql(
+//           storageSettings.RemoteDbConnectionString,
+//           ServerVersion.AutoDetect(storageSettings.RemoteDbConnectionString),
+//           mySqlOptions =>
+//           {
+//             mySqlOptions.EnableRetryOnFailure(
+//                 maxRetryCount: 20,
+//                 maxRetryDelay: TimeSpan.FromSeconds(10),
+//                 errorNumbersToAdd: null
+//             );
+//           }
+//         );
+// });
 // builder.Services.AddDbContextFactory<RemoteDbContext>(
 //       (serviceProvider, options) =>
 //       {
@@ -114,7 +114,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 // Map Razor components
-app.MapRazorComponents<App>()
+app.MapRazorComponents<tms.Components.App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();

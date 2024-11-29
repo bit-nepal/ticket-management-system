@@ -2,22 +2,23 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 using tms.Configuration;
 using tms.Data;
+using tms.Data.Context;
 using tms.Services.Printer;
 
 public class TicketService
 {
   private TicketPricingConfig _pricingConfig;
   private IPrinterService _printerService;
-  // private LocalDbContext _localDbContext;
+  private LocalDbContext _localDbContext;
 
   public TicketService(
       IOptions<TicketPricingConfig> pricingConfig,
-      IPrinterService printerService)
-  // LocalDbContext localDbContext)
+      IPrinterService printerService,
+      LocalDbContext localDbContext)
   {
     _pricingConfig = pricingConfig.Value;
     _printerService = printerService;
-    // _localDbContext = localDbContext;
+    _localDbContext = localDbContext;
   }
 
   public int GetBaseTicketPrice(Nationality nationality, PersonType personType)
@@ -44,17 +45,19 @@ public class TicketService
   {
     ticket.TotalPrice = CalculateTotalPrice(ticket);
     ticket.BarCodeData = GenerateTicketCode();
+    ticket.NepaliDate = "2";
     Console.WriteLine(GenerateTicketCode());
-    if (CreateTicket(ticket))
+    if (await CreateTicket(ticket))
     {
+      ticket.TicketNo = ticket.Id;
       return await _printerService.PrintTicket(ticket);
     }
     return false;
   }
-  public bool CreateTicket(Ticket ticket)
+  public async Task<bool> CreateTicket(Ticket ticket)
   {
-    // _localDbContext.Add(ticket);
-    return true;
+    _localDbContext.Add(ticket);
+    return await _localDbContext.SaveChangesAsync() > 0;
   }
   public TicketPricingConfig GetPricingConfig()
   {
