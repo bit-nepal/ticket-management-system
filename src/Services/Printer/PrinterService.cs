@@ -175,7 +175,9 @@ public class PrinterService : IPrinterService
      e.PrintLine(""),
      e.PrintLine(""),
      e.PrintLine("[ ]  Painting  Section "),
+     e.PrintLine(""),
      e.PrintLine("[ ] Woodcraft  Section "),
+     e.PrintLine(""),
      e.PrintLine("[ ] Metalcraft Section "),
      e.PrintLine(""),
      e.PrintLine(""),
@@ -220,8 +222,17 @@ public class PrinterService : IPrinterService
 
      e.LeftAlign(),
      e.PrintLine(MARGIN + "Ticket No: " + ticket.TicketNo),
+     e.PrintLine(MARGIN + "Name:" + ticket.CustomText),
+     e.Print(MARGIN + "Nationality: "),
+     e.Print(ticket.Nationality == Nationality.SAARCMember ? "SAARC Member" : ticket.Nationality + ""),
+     e.PrintLine(ticket.Nationality == Nationality.Nepali ? " " + ticket.PersonType : ""),
+     e.PrintLine(MARGIN + "No of People: " + ticket.NoOfPeople),
+     e.PrintLine(MARGIN + "Camera:" + ticket.AddOns.First(x => x.AddOnType == AddOnType.Camera).Quantity),
+     e.PrintLine(MARGIN + "Video Camera:" + ticket.AddOns.First(x => x.AddOnType == AddOnType.VideoCamera).Quantity),
      e.PrintLine(MARGIN + "Entrance Fee: Rs " + ticket.TotalPrice),
-     e.FullCutAfterFeed(0)
+
+     e.LeftAlign(),
+      e.FullCutAfterFeed(0)
    );
   }
 }
