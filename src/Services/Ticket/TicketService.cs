@@ -40,15 +40,16 @@ public class TicketService
         : basePrice + addOnFees;
   }
 
-  public void FinalizeTicket(Ticket ticket)
+  public async Task<bool> FinalizeTicket(Ticket ticket)
   {
     ticket.TotalPrice = CalculateTotalPrice(ticket);
     ticket.BarCodeData = GenerateTicketCode();
     Console.WriteLine(GenerateTicketCode());
     if (CreateTicket(ticket))
     {
-      _printerService.PrintTicket(ticket);
+      return await _printerService.PrintTicket(ticket);
     }
+    return false;
   }
   public bool CreateTicket(Ticket ticket)
   {

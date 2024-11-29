@@ -32,9 +32,12 @@ builder.Services.AddScoped<PrinterConfigurationService>();
 // Register SQLite DbContext for local database with EF Core
 builder.Services.AddDbContext<LocalDbContext>((serviceProvider, options) =>
 {
-  // var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
-  // options.UseSqlite($"Data Source={storageSettings.SQLiteDbPath}");
-  options.UseSqlite($"Data Source=tmssqlite.db;");
+  var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
+  string connString = $"Data Source={storageSettings.SQLiteDbPath}";
+  Console.WriteLine("------------------------------------");
+  Console.WriteLine(connString);
+  options.UseSqlite(connString);
+  // options.UseSqlite($"Data Source=tmssqlite.db;");
 });
 builder.Services.AddDbContext<RemoteDbContext>((serviceProvider, options) =>
 {

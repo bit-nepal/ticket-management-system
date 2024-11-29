@@ -22,42 +22,51 @@ public class PrinterService : IPrinterService
   {
     this.isLocalConnection = isLocalConnection;
   }
-  public async void PrintTicket(Ticket ticket)
+  public async Task<bool> PrintTicket(Ticket ticket)
   {
     printdata(ticket);
-    if (!isLocalConnection)
+    try
     {
-      Console.WriteLine("Printing Remotely");
-      var hostnameOrIp = _printerConfigService.GetHost();
-      var port = _printerConfigService.GetPort();
-      var printer = new ImmediateNetworkPrinter(
-          new ImmediateNetworkPrinterSettings()
-          {
-            ConnectionString = $"{hostnameOrIp}:{port}",
-            PrinterName = "TestPrinter"
-          }
-        );
-      await printer.WriteAsync(getTicketBytes(ticket));
+      if (!isLocalConnection)
+      {
+        Console.WriteLine("Printing Remotely");
+        var hostnameOrIp = _printerConfigService.GetHost();
+        var port = _printerConfigService.GetPort();
+        var printer = new ImmediateNetworkPrinter(
+            new ImmediateNetworkPrinterSettings()
+            {
+              ConnectionString = $"{hostnameOrIp}:{port}",
+              PrinterName = "TestPrinter"
+            }
+          );
+        await printer.WriteAsync(getTicketBytes(ticket));
+      }
+      else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+      {
+        Console.WriteLine("Printing Locally on Windows");
+        var printer = new SerialPrinter(portName: _printerConfigService.GetComPort(), baudRate: 115200);
+        printer.Write(getTicketBytes(ticket));
+      }
+      else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+      {
+        Console.WriteLine("Printing Locally Linux");
+        var printer = new FilePrinter(filePath: _printerConfigService.GetComPort());
+        printer.Write(getTicketBytes(ticket));
+      }
+      else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+      {
+        Console.WriteLine("Printing Locally OSX");
+      }
+      else
+      {
+        Console.WriteLine("ELSE");
+      }
+      return true;
     }
-    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+    catch (Exception e)
     {
-      Console.WriteLine("Printing Locally on Windows");
-      var printer = new SerialPrinter(portName: _printerConfigService.GetComPort(), baudRate: 115200);
-      printer.Write(getTicketBytes(ticket));
-    }
-    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-    {
-      Console.WriteLine("Printing Locally Linux");
-      var printer = new FilePrinter(filePath: _printerConfigService.GetComPort());
-      printer.Write(getTicketBytes(ticket));
-    }
-    else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-    {
-      Console.WriteLine("Printing Locally OSX");
-    }
-    else
-    {
-      Console.WriteLine("ELSE");
+      Console.WriteLine(e.Message);
+      return false;
     }
   }
 
