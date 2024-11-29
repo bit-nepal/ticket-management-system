@@ -1,9 +1,8 @@
 using tms.Services;
+using tms.Data.Context;
 using tms.Utils;
-using tms.Components;
 using tms.Services.Storage;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using tms.Configuration;
 using Microsoft.Extensions.Options;
 using tms.Services.Printer;
@@ -26,32 +25,37 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 // Register the storage configuration service
-builder.Services.AddSingleton<StorageConfigurationService>();
-builder.Services.AddSingleton<PrinterConfigurationService>();
+builder.Services.AddScoped<StorageConfigurationService>();
+builder.Services.AddScoped<PrinterConfigurationService>();
 
 // Register SQLite DbContext for local database with EF Core
 builder.Services.AddDbContext<LocalDbContext>((serviceProvider, options) =>
 {
-  var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
-  options.UseSqlite($"Data Source={storageSettings.SQLiteDbPath}");
+  // var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
+  // string connString = $"Data Source={storageSettings.SQLiteDbPath}";
+  string connString = "Data Source=app.db";
+  Console.WriteLine("------------------------------------");
+  Console.WriteLine(connString);
+  options.UseSqlite(connString);
+  // options.UseSqlite($"Data Source=tmssqlite.db;");
 });
-builder.Services.AddDbContext<RemoteDbContext>((serviceProvider, options) =>
-{
-  var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
-  options.UseMySql(
-          storageSettings.RemoteDbConnectionString,
-          ServerVersion.AutoDetect(storageSettings.RemoteDbConnectionString),
-          mySqlOptions =>
-          {
-            mySqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 20,
-                maxRetryDelay: TimeSpan.FromSeconds(10),
-                errorNumbersToAdd: null
-            );
-          }
-        );
-}
-    );
+
+// builder.Services.AddDbContext<RemoteDbContext>((serviceProvider, options) =>
+// {
+//   var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
+//   options.UseMySql(
+//           storageSettings.RemoteDbConnectionString,
+//           ServerVersion.AutoDetect(storageSettings.RemoteDbConnectionString),
+//           mySqlOptions =>
+//           {
+//             mySqlOptions.EnableRetryOnFailure(
+//                 maxRetryCount: 20,
+//                 maxRetryDelay: TimeSpan.FromSeconds(10),
+//                 errorNumbersToAdd: null
+//             );
+//           }
+//         );
+// });
 // builder.Services.AddDbContextFactory<RemoteDbContext>(
 //       (serviceProvider, options) =>
 //       {
@@ -72,20 +76,20 @@ builder.Services.AddDbContext<RemoteDbContext>((serviceProvider, options) =>
 //     );
 
 // Register storage services with necessary configuration parameters
-builder.Services.AddSingleton<IPrinterService, PrinterService>();
-builder.Services.AddSingleton<SQLiteStorageService>();
-builder.Services.AddSingleton<OnlineDbStorageService>();
-builder.Services.AddSingleton<FileStorageService>(serviceProvider =>
+builder.Services.AddScoped<IPrinterService, PrinterService>();
+builder.Services.AddScoped<SQLiteStorageService>();
+builder.Services.AddScoped<OnlineDbStorageService>();
+builder.Services.AddScoped<FileStorageService>(serviceProvider =>
 {
   var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
   return new FileStorageService(storageSettings.LocalFileStoragePath);
 });
 
 // Register the StorageFactory after registering individual storage services
-builder.Services.AddSingleton<StorageFactory>();
+builder.Services.AddScoped<StorageFactory>();
 
 //Ticket 
-builder.Services.AddSingleton<TicketService>();
+builder.Services.AddScoped<TicketService>();
 builder.Services.AddOptions<TicketPricingConfig>()
     .Configure<IConfiguration>((settings, configuration) =>
     {
@@ -110,9 +114,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 // Map Razor components
-app.MapRazorComponents<App>()
+app.MapRazorComponents<tms.Components.App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
 
-BrowserHelper.OpenBrowser("https://localhost:5000/ticket");
+// BrowserHelper.OpenBrowser("https://localhost:5000/ticket");
