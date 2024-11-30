@@ -1,10 +1,22 @@
 ﻿@page "/verification"
 <h3>Verification</h3>
 
-<div class="form-group mb-3">
-    <label for="TicketVerification" class="form-label fw-bold d-block">Ticket verification:</label>
-    <Switch @bind-Value="@IsValid"/>
-</div>
+<Offcanvas 
+      @ref="offcanvas" 
+      UseStaticBackdrop="true" 
+      style="width: 0px; 
+             height:0px;" />
+
+<input type="text" 
+        @ref="barCodeInput" 
+        @bind-value="barCodeData" 
+        @bind-value:event="oninput" 
+        @onkeydown="Enter"
+        @onblur="lostFocus"
+        style="position:absolute; 
+                opacity:0; 
+                height:10px; 
+                width:10px;"/>
 
 @if (IsValid)
 {
@@ -28,6 +40,38 @@ else
     </Card>
 }
 
-@code {
+
+Current value: @barCodeData
+@code{
     private bool IsValid;
+    private string barCodeData;
+    private Offcanvas? offcanvas;
+    private ElementReference barCodeInput;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        { 
+            await barCodeInput.FocusAsync();
+        }
+    }
+
+    private void lostFocus(){
+      barCodeInput.FocusAsync();
+    }
+
+    public void Enter(KeyboardEventArgs e)
+    {
+      if (e.Code == "Enter" || e.Code == "NumpadEnter")
+      {
+        ValidateBarCode();
+      }
+    }
+
+    private void ValidateBarCode()
+    {
+      Console.WriteLine($"Validating BarCode: {barCodeData}");
+      IsValid = barCodeData == "123456";
+      barCodeData = String.Empty;
+    }
 }
