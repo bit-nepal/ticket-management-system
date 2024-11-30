@@ -1,5 +1,6 @@
 @page "/ticket"
 @inject TicketService ticketService;
+@inject ToastService ToastService;
 
 <PageTitle>Ticket Creation</PageTitle>
 
@@ -119,11 +120,18 @@
         }
     };
 
+
     private async Task HandleValidSubmit()
     {
         SanitizeTicketData();
         PrintData();
-        ticketService.FinalizeTicket(ticket);
+        if(await ticketService.FinalizeTicket(ticket))
+        {
+            ToastService.Notify(new(ToastType.Success, $"Ticket Printed Successfully."));
+        }else
+        {
+            ToastService.Notify(new(ToastType.Danger, $"Error: Printing Ticket"));
+        }
         ClearForm();
     }
 
