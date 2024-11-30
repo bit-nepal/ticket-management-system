@@ -4,7 +4,7 @@
 <PageTitle>Ticket Creation</PageTitle>
 
 <Card class="my-card-container">
-    <CardHeader class="bg-purple text-white text-center rounded">
+    <CardHeader class="bg-blue text-white text-center rounded">
         <h4 class="m-1">Ticket Creation Form</h4>
     </CardHeader>
     <CardBody>
@@ -71,7 +71,7 @@
                         }
                         else
                         {
-                            <InputCheckbox class="form-check-input ms-1" @bind-Value="currentAddon.IsSelected" />
+                            <InputCheckbox class="form-check-input mb-2" @bind-Value="currentAddon.IsSelected" />
                         }
                     </div>
                 }
@@ -79,8 +79,8 @@
 
             <!-- Submit Button -->
             <div class="d-grid gap-2 mt-4">
-                <Button Type="ButtonType.Submit" Color="ButtonColor.Success" class="btn btn-lg" Style=" border-color: #6f42c1;">
-                    Submit
+                <Button Type="ButtonType.Submit" Color="ButtonColor.Success" Size="ButtonSize.Large" Style=" border-color: #6f42c1;">
+                    Print &nbsp; <i class="bi bi-printer-fill" id="togglePasswordIcon"></i>
                 </Button>
             </div>
         </EditForm>
@@ -89,8 +89,8 @@
 
 <!-- Custom CSS -->
 <style>
-    .bg-purple {
-    background-color: blue ;
+    .bg-blue {
+        background-color: #2460b9;
     }
 
     .fw-bold {
