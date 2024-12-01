@@ -3,14 +3,15 @@
 <div class="bb-page" >
     <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
     <Sidebar @ref="sidebar"
-             IconName="IconName.BootstrapFill"
+             ImageSrc="HubizenLogoWhite.png"
              Title="Ticket Management"
              DataProvider="SidebarDataProvider" 
              />
 
     <main>
-        <div class="bb-top-row px-4 d-flex justify-content-around navbar-brand">
-            <marquee class="company-name">National Art Museum, Bhaktapur, Nepal </marquee>
+        <div class="bb-top-row px-4 d-flex flex-column justify-content-around navbar-brand">
+            <span class="company-name mt-2">National Art Museum</span> 
+            <span class="h6"> Bhaktapur, Nepal</span>
         </div>
         <article class="content px-4">
             <div class="py-2">@Body</div>
@@ -20,7 +21,9 @@
 
 <style>
     :root{
-        --bb-sidebar-top-row-background-color: blue;
+        --bb-sidebar-top-row-background-color: #2460b9;
+        --bb-sidebar-nav-item-text-active-color-rgb: 0,0,139;
+        --bb-sidebar-nav-item-text-hover-color: rgba(var(--bb-sidebar-nav-item-text-active-color-rgb),0.9);
     }
 
 
@@ -34,12 +37,12 @@
         font-family: 'Poppins', sans-serif;
         font-size: 1.5rem;
         font-weight: bold;
-        color: #333; /* Dark gray for a professional look */
+        color: red; 
         letter-spacing: 1px; /* Adds a slight spacing for elegance */
         text-transform: uppercase; /* Makes the name stand out */
     }
 
-        /* Optional hover effect */
+        /*Hover effect */
         .company-name:hover {
             color: #007bff; /* Subtle blue hover effect */
             text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
@@ -62,11 +65,13 @@
     {
         navItems = new List<NavItem>
                    {
-                       new NavItem { Id = "1", Href = "/ticket", IconName = IconName.PlusSquareFill, Text = "Ticket"},
-                       new NavItem { Id = "2", Href = "/ticket-settings", IconName = IconName.GearFill, Text = "Ticket Settings"},
-                       new NavItem { Id = "3", Href = "/settings", IconName = IconName.PlusSquareFill, Text = "Settings"},
-                       new NavItem { Id = "4", Href = "/settings", IconName = IconName.PlusSquareFill, Text = "Logout"},
-                       new NavItem { Id = "5", Href = "/settings", Text = " © Hubizen Innovations", Class="position-absolute bottom-0 start-0"}
+                       new NavItem { Id = "1", Href = "/ticket", IconName = IconName.TicketPerforatedFill, IconColor= IconColor.Primary ,Text = "Ticket"},
+                       new NavItem { Id = "2", Href = "/ticket-settings", IconName = IconName.CurrencyDollar, Text = "Ticket Settings"},
+                       new NavItem { Id = "3", Href = "/settings", IconName = IconName.GearFill, IconColor= IconColor.Secondary , Text = "Settings"},
+                       new NavItem { Id = "4", Href = "/verification", IconName = IconName.CheckSquareFill, IconColor= IconColor.Success , Text = "Verify Ticket"},
+                       new NavItem { Id = "5", Href = "/change-password", IconName = IconName.HouseLockFill, IconColor= IconColor.Warning , Text = "Change Password"},
+                       new NavItem { Id = "6", Href = "/settings", IconName = IconName.ArrowReturnLeft, IconColor= IconColor.Danger , Text = "Logout", Class="text-danger"},
+                       new NavItem { Id = "7", Href = "https://www.hubizen.com", Text = " © Hubizen Innovations", Class="position-absolute bottom-0 start-0"}
 
 
                    };
