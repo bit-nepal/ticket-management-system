@@ -5,17 +5,17 @@
 <PageTitle>Ticket Creation</PageTitle>
 
 <Card class="my-card-container">
-    <CardHeader class="bg-blue text-white text-center rounded">
+    <CardHeader class="bg-blue text-white text-center rounded-3">
         <h4 class="m-1">Ticket Creation Form</h4>
     </CardHeader>
-    <CardBody>
+    <CardBody Class="pb-2">
         <EditForm Model="@ticket" class="form-horizontal" OnValidSubmit="@HandleValidSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
             <!-- Nationality Selection -->
             <div class="form-group mb-3">
-                <label for="Nationality" class="form-label fw-bold">Nationality:</label>
+                <label for="Nationality" class="form-label fw-bold mb-0">Nationality:</label>
                 <InputSelect class="form-control" @bind-Value="ticket.Nationality">
                     @foreach (var nationality in Enum.GetValues(typeof(Nationality)))
                     {
@@ -28,7 +28,7 @@
             @if (ticket.Nationality == Nationality.Nepali)
             {
                 <div class="form-group mb-3">
-                    <label for="PersonType" class="form-label fw-bold">Person Type:</label>
+                    <label for="PersonType" class="form-label fw-bold mb-0">Person Type:</label>
                     <InputSelect class="form-control" @bind-Value="ticket.PersonType">
                         @foreach (var person in Enum.GetValues(typeof(PersonType)))
                         {
@@ -39,8 +39,8 @@
             }
 
             <!-- Group Visit Switch -->
-            <div class="form-group mb-3">
-                <label for="GroupVisit" class="form-label fw-bold d-block">Group Visit:</label>
+            <div class="form-group d-flex mb-3">
+                <label for="GroupVisit" class="form-label fw-bold mb-0">Group Visit:</label> &nbsp; &nbsp;
                 <Switch @bind-Value="ticket.IsGroupVisit" />
             </div>
 
@@ -48,18 +48,18 @@
             @if (ticket.IsGroupVisit)
             {
                 <div class="form-group mb-3">
-                    <label for="NoOfPeople" class="form-label fw-bold">No. of People:</label>
+                    <label for="NoOfPeople" class="form-label fw-bold mb-0">No. of People:</label>
                     <NumberInput TValue="int" class="form-control" @bind-Value="ticket.NoOfPeople" />
                 </div>
 
                 <div class="form-group mb-3">
-                    <label for="CustomText" class="form-label fw-bold">Group Name:</label>
+                    <label for="CustomText" class="form-label fw-bold mb-0">Group Name:</label>
                     <InputText class="form-control" @bind-Value="ticket.CustomText" Placeholder="Enter group name" />
                 </div>
             }
 
             <!-- Add-On Selection -->
-            <div class="form-group mb-3">
+            <div class="form-group mb-2">
                 <label for="AddOn" class="form-label fw-bold">Add Ons:</label>
                 @foreach (var addonType in Enum.GetValues(typeof(AddOnType)).Cast<AddOnType>())
                 {

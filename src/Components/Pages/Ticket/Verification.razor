@@ -1,43 +1,77 @@
 ﻿@page "/verification"
-<h3>Verification</h3>
 
 <Offcanvas 
-      @ref="offcanvas" 
-      UseStaticBackdrop="true" 
-      style="width: 0px; 
+@ref="offcanvas" 
+UseStaticBackdrop="true" 
+style="width: 0px; 
              height:0px;" />
 
 <input type="text" 
-        @ref="barCodeInput" 
-        @bind-value="barCodeData" 
-        @bind-value:event="oninput" 
-        @onkeydown="Enter"
-        @onblur="lostFocus"
-        style="position:absolute; 
+@ref="barCodeInput" 
+@bind-value="barCodeData" 
+@bind-value:event="oninput" 
+@onkeydown="Enter"
+@onblur="lostFocus"
+style="position:absolute; 
                 opacity:0; 
                 height:10px; 
                 width:10px;"/>
 
 @if (IsValid)
 {
-    <Card Color="CardColor.Success" Class="mb-4" Style="width:18rem;">
-        <CardHeader>Valid</CardHeader>
+    <Card Color="CardColor.Success" Class="my-card-container-green responsive-card mt-4 mb-4">
+        <CardHeader Class="rounded-3">Ticket Verification: VALID</CardHeader>
         <CardBody>
             <CardTitle>The ticket is valid.</CardTitle>
-            <CardText>You can enter the premises.</CardText>
+            <CardText Class="card-content">You can enter the premises.</CardText>
         </CardBody>
     </Card>
 }
 else
 {
-    <Card Color="CardColor.Danger" Class="mb-4" Style="width:18rem;">
-        <CardHeader>Invalid</CardHeader>
+    <Card Color="CardColor.Danger" Class="my-card-container-red responsive-card mt-4 mb-4">
+        <CardHeader Class="rounded-3">INVALID</CardHeader>
         <CardBody>
             <CardTitle>The ticket is invalid.</CardTitle>
-            <CardText>Sorry, you cannot enter. Please purchase new ticket to verify.</CardText>
+            <CardText Class="card-content">Sorry, you cannot enter. Please purchase new ticket to verify.</CardText>
         </CardBody>
     </Card>
 }
+
+<style>
+    .my-card-container-red {
+    padding: 15px;
+    margin: auto;
+    border-radius: 15px;
+    border: none;
+    width: 35rem;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.7), 0 0 30px rgba(255, 0, 0, 0.5), 0 0 45px rgba(255, 0, 0, 0.3);
+    background-color: #fff; 
+    }
+
+    .my-card-container-green {
+    padding: 15px;
+    margin: auto;
+    border-radius: 15px;
+    border: none;
+    width: 35rem;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.7), 0 0 30px rgba(0, 255, 0, 0.5), 0 0 45px rgba(0, 255, 0, 0.3);
+    background-color: #fff;
+    }
+
+    @@media (max-width: 576px) {
+        .my-card-container-green, .my-card-container-red
+    {
+        padding: 1rem; /* Add padding for smaller screens */
+        font-size: 1rem; /* Adjust text size */
+        width: 19rem;
+        margin: auto;
+    }
+
+    }
+
+
+</style>
 
 
 Current value: @barCodeData
@@ -56,21 +90,21 @@ Current value: @barCodeData
     }
 
     private void lostFocus(){
-      barCodeInput.FocusAsync();
+        barCodeInput.FocusAsync();
     }
 
     public void Enter(KeyboardEventArgs e)
     {
-      if (e.Code == "Enter" || e.Code == "NumpadEnter")
-      {
-        ValidateBarCode();
-      }
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            ValidateBarCode();
+        }
     }
 
-    private void ValidateBarCode()
+    private async void ValidateBarCode()
     {
-      Console.WriteLine($"Validating BarCode: {barCodeData}");
-      IsValid = barCodeData == "123456";
-      barCodeData = String.Empty;
+        Console.WriteLine($"Validating BarCode: {barCodeData}");
+        IsValid = barCodeData == "123456";
+        barCodeData = String.Empty;
     }
 }

@@ -6,32 +6,34 @@
 
 <div class="d-flex justify-content-around">
     <div>
-        <h3>Storage Settings</h3>
-        <Card Style="width:18rem;" Class="">
+        <Card Class="my-card-container">
+            <CardHeader class="bg-blue text-white text-center rounded-3">
+                <h4 class="m-1">Storage Settings</h4>
+            </CardHeader>
             <CardBody>
-                
+  
                 <EditForm Model="@StorageConfigService" class="form-inline" OnValidSubmit="@HandleValidSubmit">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
 
                     <div class="form-group mt-4">
-                        <label for="SQLitePath" class="h5">SQLite Database Path:</label>
+                        <label for="SQLitePath" class="h5 fw-bold">SQLite Database Path:</label>
                         <div class="d-flex">
                             <InputText class="form-control form-control-lg" @bind-Value="SQLitePath" placeholder="Enter SQLite DB Path" /> &nbsp; &nbsp;
-                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveSQLitePath"> Save </Button>
+                            <Button Color="ButtonColor.Success" Outline="true" @onclick="SaveSQLitePath"> Save </Button>
                         </div>
                     </div>
 
                     <div class="form-group mt-4">
-                        <label for="OnlineDBConnectionString" class="h5">Online DB Connection String:</label>
+                        <label for="OnlineDBConnectionString" class="h5 fw-bold">Online DB Connection String:</label>
                         <div class="d-flex">
                             <InputText class="form-control form-control-lg" @bind-Value="RemoteDbConnectionString" placeholder="Enter Online DB Connection" />&nbsp; &nbsp;
-                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveRemoteDbConnectionString"> Save </Button>
+                            <Button Color="ButtonColor.Success" Outline="true" @onclick="SaveRemoteDbConnectionString"> Save </Button>
                         </div>
                     </div>
 
                     <div class="form-group mt-4">                
-                        <label for="BackupFilePath" class="h5">Backup File Path:</label>
+                        <label for="BackupFilePath" class="h5 fw-bold">Backup File Path:</label>
                         <div class="d-flex">
                             <InputText class="form-control form-control-lg" @bind-Value="LocalFileStoragePath" placeholder="Enter Backup File Path" />&nbsp; &nbsp;
                             <Button Color="ButtonColor.Success" Outline="true" @onclick="SaveLocalFileStoragePath"> Save </Button>
@@ -45,8 +47,10 @@
     </div>
 
     <div>
-        <h3>Printer Settings</h3>
-        <Card Style="width:18rem;" Class="">
+        <Card Class="my-card-container">
+            <CardHeader class="bg-blue text-white text-center rounded-3">
+                <h4 class="m-1">Printer Settings</h4>
+            </CardHeader>
             <CardBody>
                 
                 <EditForm Model="@StorageConfigService" class="form-inline" OnValidSubmit="@HandleValidSubmit">
@@ -55,48 +59,65 @@
 
 
                     <div class="form-group mt-4">
-                        <label for="Port" class="h5">IP Address:</label>
+                        <label for="Port" class="h5 fw-bold">IP Address:</label>
                         <div class="d-flex">
                             <InputText class="form-control form-control-lg" @bind-Value="PrinterHost" placeholder="Enter HostName or IpAddress" /> &nbsp; &nbsp;
-                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SetPrinterHost"> Save </Button>
+                            <Button Color="ButtonColor.Success" Outline="true" @onclick="SetPrinterHost"> Save </Button>
                         </div>
                     </div>
 
                     <div class="form-group mt-4">
-                        <label for="IPAddress" class="h5">Port:</label>
+                        <label for="IPAddress" class="h5 fw-bold">Port:</label>
                         <div class="d-flex">
                             <InputNumber class="form-control form-control-lg" @bind-Value="PrinterPort" placeholder="Enter Port" /> &nbsp; &nbsp;
-                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SetPrinterPort"> Save </Button>
+                            <Button Color="ButtonColor.Success" Outline="true" @onclick="SetPrinterPort"> Save </Button>
                         </div>
                     </div>
-                  <div class="form-group mt-4">
-                        <label for="Com Port" class="h5">Port:</label>
+@*                   <div class="form-group mt-4">
+                        <label for="Com Port" class="h5 fw-bold">Port:</label>
                         <div class="d-flex">
                             <InputText class="form-control form-control-lg" @bind-Value="PrinterComPort" placeholder="Enter Com Port" /> &nbsp; &nbsp;
-                            <Button Color="ButtonColor.Primary" Outline="true" @onclick="SetPrinterComPort"> Save </Button>
+                            <Button Color="ButtonColor.Success" Outline="true" @onclick="SetPrinterComPort"> Save </Button>
                         </div>
+                    </div> *@
+
+                    <div class="form-group mt-4">
+                          <label for="IPAddress" class="h5 fw-bold">Test:</label>
+                                <div class="d-flex justify-content-center">
+                                    <InputText hidden class="form-control form-control-lg" @bind-Value="message" placeholder="Enter message" />&nbsp; &nbsp;
+                                    <Button Color="ButtonColor.Info" Outline="true" @onclick="PrintMessage"> Print</Button> &nbsp;
+                                    <Button Color="ButtonColor.Info" Outline="true" @onclick="FeedPaper"> Feed</Button> &nbsp;
+                                    <Button Color="ButtonColor.Info" Outline="true" @onclick="CutPaper"> Cut</Button>
+        @*                          <Switch @bind-Value="isLocalConnection" />     *@                           
+                             </div>
                     </div>
 
-<div class="form-group mt-4">
-                        <div class="d-flex">
-                        <label for="IPAddress" class="h5">Test:</label>
-                            <InputText hidden class="form-control form-control-lg" @bind-Value="message" placeholder="Enter message" />&nbsp; &nbsp;
-                            <Button Color="ButtonColor.Success" Outline="true" @onclick="PrintMessage"> Print</Button> &nbsp;
-                            <Button Color="ButtonColor.Success" Outline="true" @onclick="FeedPaper"> Feed</Button> &nbsp;
-                            <Button Color="ButtonColor.Success" Outline="true" @onclick="CutPaper"> Cut</Button>
-                            <Switch @bind-Value="isLocalConnection" />
-                        </div>&nbsp;
-                    </div>
-
-                                    </EditForm>
+                </EditForm>
             </CardBody>
         </Card>
     </div>
 </div>
-<div class="d-flex justify-content-center">
-    <Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveAllSettings"> Save All </Button> &nbsp; &nbsp;
-<Button Color="ButtonColor.Primary" Outline="true" @onclick="SaveRemoteDbConnectionString"> Test </Button>
-</div>
+<div class="d-flex justify-content-center mt-5">
+    <Button Color="ButtonColor.Success" Size="ButtonSize.Large" @onclick="SaveAllSettings"> Save All </Button> &nbsp; &nbsp;
+@*     <Button Color="ButtonColor.Primary" @onclick="SaveRemoteDbConnectionString"> Test </Button>      *@
+ </div>
+
+<style>
+    .bg-blue {
+        background-color: #2460b9;
+    }
+
+    .my-card-container {
+        padding: 15px;
+        margin: auto;
+        background-color: white;
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+        width: 24rem;
+    }
+</style>
+
 @code {
     private string SQLitePath;
     private string RemoteDbConnectionString;

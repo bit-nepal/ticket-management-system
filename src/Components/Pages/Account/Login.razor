@@ -5,7 +5,7 @@
 
 <Card Class="my-card-container">
     <CardHeader class="bg-blue rounded-3 text-white text-center">
-        <h4 class="mt-2">Admin Login</h4>
+        <h3 class="m-2"> <i class="bi bi-person-circle"></i> Admin </h3>
     </CardHeader>
     <CardBody>
         <EditForm Model="@StorageConfigService" class="form-horizontal">
@@ -15,11 +15,11 @@
                       <div class="d-flex justify-content-around">
                          <input asp-for="Password" @bind-value="Password" type="@PasswordInputType" class="form-control form-control-lg" id="password" placeholder="Enter password">
                             <div>
-                        <Button Type="ButtonType.Button" Color="ButtonColor.Secondary" Outline="true" class="btn btn-lg" @onclick="TogglePasswordVisibility">
-                            <i class="@ToggleIconClass" id="togglePasswordIcon"></i>
-                                </Button>
+                            <Button Type="ButtonType.Button" Color="ButtonColor.Secondary" Outline="true" class="btn btn-lg" @onclick="TogglePasswordVisibility">
+                                <i class="@ToggleIconClass" id="togglePasswordIcon"></i>
+                            </Button>
                             </div>
-                        </div>
+                      </div>
             </div>
 
             <div class="d-grid gap-2 mt-4">
