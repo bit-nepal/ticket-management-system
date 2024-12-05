@@ -1,4 +1,5 @@
 @page "/ticket"
+@page "/"
 @inject TicketService ticketService;
 @inject ToastService ToastService;
 
@@ -9,7 +10,7 @@
         <h4 class="m-1">Ticket Creation Form</h4>
     </CardHeader>
     <CardBody Class="pb-2">
-        <EditForm Model="@ticket" class="form-horizontal" OnValidSubmit="@HandleValidSubmit">
+        <EditForm Model="@ticket" @onchange="UIUpdated" class="form-horizontal" OnValidSubmit="@HandleValidSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
@@ -81,7 +82,7 @@
             <!-- Submit Button -->
             <div class="d-grid gap-2 mt-4">
                 <Button Type="ButtonType.Submit" Color="ButtonColor.Success" Size="ButtonSize.Large" Style=" border-color: #6f42c1;">
-                    Print &nbsp; <i class="bi bi-printer-fill" id="togglePasswordIcon"></i>
+                    <i class="bi bi-printer-fill" id="togglePasswordIcon"></i>&nbsp; Print &nbsp;  (Rs. @ticket.TotalPrice)
                 </Button>
             </div>
         </EditForm>
@@ -91,7 +92,7 @@
 <!-- Custom CSS -->
 <style>
     .bg-blue {
-        background-color: #2460b9;
+    background-color: #2460b9;
     }
 
     .fw-bold {
@@ -147,13 +148,13 @@
     }
     private void SanitizeTicketData()
     {
-      if (ticket.Nationality != Nationality.Nepali) ticket.PersonType = PersonType.General;
-      if (!ticket.IsGroupVisit) ticket.NoOfPeople = 1;
-      foreach (var addon in ticket.AddOns)
-      {
-          if (!ticket.IsGroupVisit) addon.Quantity = addon.IsSelected ? 1 : 0;
-          else addon.Quantity = addon.Quantity > 0 ? addon.Quantity : 0;
-      }
+        if (ticket.Nationality != Nationality.Nepali) ticket.PersonType = PersonType.General;
+        if (!ticket.IsGroupVisit) ticket.NoOfPeople = 1;
+        foreach (var addon in ticket.AddOns)
+        {
+            if (!ticket.IsGroupVisit) addon.Quantity = addon.IsSelected ? 1 : 0;
+            else addon.Quantity = addon.Quantity > 0 ? addon.Quantity : 0;
+        }
     }
     private void PrintData()
     {
@@ -179,6 +180,10 @@
             new AddOn { AddOnType = AddOnType.VideoCamera, Quantity = 0 }
         }
             };
+    }
+
+    private void UIUpdated(){
+        ticket.TotalPrice = ticketService.CalculateTotalPrice(ticket);
     }
 }
 
