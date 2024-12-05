@@ -18,8 +18,11 @@ public class RevenueService
 
   public async Task AddTicketSaleAsync(Ticket ticket)
   {
-    var bsDate = _dateConversionService.ConvertEnglishDateToNepaliDate(ticket.TimeStamp.Date);
+    Console.WriteLine("================== ADDING TICKET TO REVENUE " + ticket.TimeStamp.Date);
+    // ticket.TimeStamp.Date = DateTime.Now;
+    var bsDate = _dateConversionService.ConvertEnglishDateToNepaliDate(DateTime.Now);
     // Get or create daily revenue
+    Console.WriteLine("================== ADDING TICKET TO REVENUE " + bsDate);
     var dailyRevenue = await GetOrCreateDailyRevenueAsync(bsDate);
     // Update revenue cells
     foreach (var addOn in ticket.AddOns)
