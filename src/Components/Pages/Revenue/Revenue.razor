@@ -1,0 +1,36 @@
+﻿@page "/revenue"
+@using tms.Components.Pages.Revenue
+
+<div id="RevenuePrintComponent">
+    <RevenuePrintComponent /> 
+</div>
+
+<div id="RevenueUIComponent">
+    <RevenuePrintComponent />
+    @* <RevenueUIComponent /> *@
+</div>
+
+<style>
+    #RevenueUIComponent{
+        display: block;
+    }
+
+    #RevenuePrintComponent{
+        display: none;
+    }
+
+    @@media print{
+        #RevenueUIComponent {
+            display: none;
+        }
+
+        #RevenuePrintComponent {
+            display: block;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            left: 0;
+        }
+    }
+</style>
