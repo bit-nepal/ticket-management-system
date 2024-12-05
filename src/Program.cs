@@ -28,6 +28,11 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped<StorageConfigurationService>();
 builder.Services.AddScoped<PrinterConfigurationService>();
 
+
+builder.Services.AddScoped<RevenueService>();
+builder.Services.AddScoped<FiscalYearService>();
+builder.Services.AddScoped<DateConversionService>();
+
 // Register SQLite DbContext for local database with EF Core
 builder.Services.AddDbContext<LocalDbContext>((serviceProvider, options) =>
 {
