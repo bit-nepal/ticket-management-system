@@ -1,5 +1,58 @@
 @page "/dashboard"
+@inject RevenueService revenueService
+
 <PageTitle>Dashboard</PageTitle>
-Total ticket sales:
-No. of visitors
-Last 10 sales
+
+<h3>Dashboard</h3>
+
+@if (isLoading)
+{
+    <p>Loading data...</p>
+}
+else
+{
+    <div>
+        <h4>Daily Revenue</h4>
+        <p>Total Tickets Sold Today: @dailyRevenue?.TotalPeople</p>
+        <p>Total Revenue Today: @dailyRevenue?.TotalRevenue</p>
+    </div>
+
+    <div>
+        <h4>Monthly Revenue</h4>
+        <p>Month: @monthlyRevenue?.Month</p>
+        <p>Total Tickets Sold This Month: @monthlyRevenue?.TotalPeople</p>
+        <p>Total Revenue This Month: @monthlyRevenue?.TotalRevenue</p>
+    </div>
+
+    <div>
+        <h4>Yearly Revenue</h4>
+        <p>Year: @yearlyRevenue?.Year</p>
+        <p>Total Tickets Sold This Year: @yearlyRevenue?.TotalPeople</p>
+        <p>Total Revenue This Year: @yearlyRevenue?.TotalRevenue</p>
+    </div>
+
+   }
+@code {
+    private bool isLoading = true;
+    private DailyRevenue? dailyRevenue;
+    private MonthlyRevenue? monthlyRevenue;
+    private YearlyRevenue? yearlyRevenue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+
+        // Fetch today's date
+        var todayNepaliDate = new NepaliDate { Year = 2081, Month = (int)NepaliMonth.Mangsir , Day = 20 }; // Example date
+        var currentMonth = todayNepaliDate.Month;
+        var currentYear = todayNepaliDate.Year;
+
+        // Fetch data
+        dailyRevenue = await revenueService.GetOrCreateDailyRevenueAsync(todayNepaliDate);
+        monthlyRevenue = await revenueService.GetMonthlyRevenueAsync(currentYear, (NepaliMonth)currentMonth);
+        yearlyRevenue = await revenueService.GetYearlyRevenueAsync(currentYear);
+
+        isLoading = false;
+    }
+}
+
