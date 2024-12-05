@@ -7,6 +7,10 @@ public class DateConversionService
     _dateMap = InitializeDateMap();
   }
 
+    public NepaliDate getCurrentDate()
+    {
+        return ConvertEnglishDateToNepaliDate(DateTime.Now);
+    }
   private Dictionary<int, NepaliYearData> InitializeDateMap()
   {
     return new Dictionary<int, NepaliYearData>

@@ -3,6 +3,7 @@
 @inject TicketService ticketService;
 @inject ToastService ToastService;
 
+<ConfirmDialog @ref="dialog" />
 <PageTitle>Ticket Creation</PageTitle>
 
 <Card class="my-card-container">
@@ -10,7 +11,7 @@
         <h4 class="m-1">Ticket Creation Form</h4>
     </CardHeader>
     <CardBody Class="pb-2">
-        <EditForm Model="@ticket" @onchange="UIUpdated" class="form-horizontal" OnValidSubmit="@HandleValidSubmit">
+        <EditForm Model="@ticket" @onchange="UIUpdated" class="form-horizontal" OnValidSubmit="@ShowPrintingConfirmationDialogAsync">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
@@ -78,11 +79,11 @@
                     </div>
                 }
             </div>
-
+            @* (Rs. @ticket.TotalPrice) *@
             <!-- Submit Button -->
             <div class="d-grid gap-2 mt-4">
                 <Button Type="ButtonType.Submit" Color="ButtonColor.Success" Size="ButtonSize.Large" Style=" border-color: #6f42c1;">
-                    <i class="bi bi-printer-fill" id="togglePasswordIcon"></i>&nbsp; Print &nbsp;  (Rs. @ticket.TotalPrice)
+                    <i class="bi bi-printer-fill" id="togglePasswordIcon"></i>&nbsp; Print &nbsp; 
                 </Button>
             </div>
         </EditForm>
@@ -112,6 +113,8 @@
 
 
 @code {
+    private ConfirmDialog dialog = default!;
+
     tms.Data.Ticket ticket = new tms.Data.Ticket
     {
         AddOns = new List<AddOn>
@@ -121,6 +124,27 @@
         }
     };
 
+    private async Task ShowPrintingConfirmationDialogAsync()
+    {
+        var options = new ConfirmDialogOptions { IsVerticallyCentered = true };
+        var parameters = new Dictionary<string, object>();
+        parameters.Add("Ticket", ticket);
+
+        var confirmation = await dialog.ShowAsync<TicketPreviewComponent>(
+            title: "Are you sure you want to delete this employee?",
+            parameters,
+            confirmDialogOptions: options
+        );
+
+        if (confirmation)
+        {
+            HandleValidSubmit();    
+        }
+        else
+        {
+            // do something
+        }
+    }
 
     private async Task HandleValidSubmit()
     {

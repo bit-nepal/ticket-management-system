@@ -1,4 +1,5 @@
-﻿
+﻿@inject RevenueService revenueService;
+@inject DateConversionService dateConversionService;
 <div class="container">
     <!-- Header Section -->
     <div class="row">
@@ -62,51 +63,57 @@
 
         <tr class="table-data">
             <th style="font-size: medium;">गत महिना सम्मको</th>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
-            <td>12345</td>
+            <td>@previousMonthlyRevenue.GetTotalPeople(RevenueType.VisitorFee_Student)</td>
+            <td>@previousMonthlyRevenue.GetTotalRevenue(RevenueType.VisitorFee_Student)</td>
+            <td>@previousMonthlyRevenue.GetTotalPeople(RevenueType.VisitorFee_Nepali)</td>
+            <td>@previousMonthlyRevenue.GetTotalRevenue(RevenueType.VisitorFee_Nepali)</td>
+            <td>@previousMonthlyRevenue.GetTotalPeople(RevenueType.VisitorFee_SAARC)</td>
+            <td>@previousMonthlyRevenue.GetTotalRevenue(RevenueType.VisitorFee_SAARC)</td>
+            <td>@previousMonthlyRevenue.GetTotalPeople(RevenueType.VisitorFee_Foreigner)</td>
+            <td>@previousMonthlyRevenue.GetTotalRevenue(RevenueType.VisitorFee_Foreigner)</td>
+            
+            <td>@previousMonthlyRevenue.GetTotalPeople(RevenueType.CameraFee_Nepali)</td>
+            <td>@previousMonthlyRevenue.GetTotalRevenue(RevenueType.CameraFee_Nepali)</td>
+            <td>@previousMonthlyRevenue.GetTotalPeople(RevenueType.CameraFee_SAARC)</td>
+            <td>@previousMonthlyRevenue.GetTotalRevenue(RevenueType.CameraFee_SAARC)</td>
+            <td>@previousMonthlyRevenue.GetTotalPeople(RevenueType.CameraFee_Foreigner)</td>
+            <td>@previousMonthlyRevenue.GetTotalRevenue(RevenueType.CameraFee_Foreigner)</td>
+
+            <td>@previousMonthlyRevenue.GetTotalPeople(RevenueType.VideoCameraFee_Nepali)</td>
+            <td>@previousMonthlyRevenue.GetTotalRevenue(RevenueType.VideoCameraFee_Nepali)</td>
+            <td>@previousMonthlyRevenue.GetTotalPeople(RevenueType.VideoCameraFee_SAARC)</td>
+            <td>@previousMonthlyRevenue.GetTotalRevenue(RevenueType.VideoCameraFee_SAARC)</td>
+            <td>@previousMonthlyRevenue.GetTotalPeople(RevenueType.VideoCameraFee_Foreigner)</td>
+            <td>@previousMonthlyRevenue.GetTotalRevenue(RevenueType.VideoCameraFee_Foreigner)</td>
+
+            <td>@previousMonthlyRevenue.TotalRevenue</td>        
         </tr>
         <tr class="table-data">
             <th style="font-size: medium;">आजको जम्मा</th>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
-            <td>67890</td>
+            <td>@dailyRevenue.GetTotalPeople(RevenueType.VisitorFee_Student)</td>
+            <td>@dailyRevenue.GetTotalRevenue(RevenueType.VisitorFee_Student)</td>
+            <td>@dailyRevenue.GetTotalPeople(RevenueType.VisitorFee_Nepali)</td>
+            <td>@dailyRevenue.GetTotalRevenue(RevenueType.VisitorFee_Nepali)</td>
+            <td>@dailyRevenue.GetTotalPeople(RevenueType.VisitorFee_SAARC)</td>
+            <td>@dailyRevenue.GetTotalRevenue(RevenueType.VisitorFee_SAARC)</td>
+            <td>@dailyRevenue.GetTotalPeople(RevenueType.VisitorFee_Foreigner)</td>
+            <td>@dailyRevenue.GetTotalRevenue(RevenueType.VisitorFee_Foreigner)</td>
+
+            <td>@dailyRevenue.GetTotalPeople(RevenueType.CameraFee_Nepali)</td>
+            <td>@dailyRevenue.GetTotalRevenue(RevenueType.CameraFee_Nepali)</td>
+            <td>@dailyRevenue.GetTotalPeople(RevenueType.CameraFee_SAARC)</td>
+            <td>@dailyRevenue.GetTotalRevenue(RevenueType.CameraFee_SAARC)</td>
+            <td>@dailyRevenue.GetTotalPeople(RevenueType.CameraFee_Foreigner)</td>
+            <td>@dailyRevenue.GetTotalRevenue(RevenueType.CameraFee_Foreigner)</td>
+
+            <td>@dailyRevenue.GetTotalPeople(RevenueType.VideoCameraFee_Nepali)</td>
+            <td>@dailyRevenue.GetTotalRevenue(RevenueType.VideoCameraFee_Nepali)</td>
+            <td>@dailyRevenue.GetTotalPeople(RevenueType.VideoCameraFee_SAARC)</td>
+            <td>@dailyRevenue.GetTotalRevenue(RevenueType.VideoCameraFee_SAARC)</td>
+            <td>@dailyRevenue.GetTotalPeople(RevenueType.VideoCameraFee_Foreigner)</td>
+            <td>@dailyRevenue.GetTotalRevenue(RevenueType.VideoCameraFee_Foreigner)</td>
+
+            <td>@dailyRevenue.TotalRevenue</td>
         </tr>
         <tr class="table-data">
             <th style="font-size: medium;">अगाडिबाट ल्याएको </th>
@@ -134,51 +141,57 @@
         </tr>
         <tr class="table-data">
             <th style="font-size: medium;">मासिक जम्मा</th>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
-            <td>31965</td>
+            <td>@monthlyRevenue.GetTotalPeople(RevenueType.VisitorFee_Student)</td>
+            <td>@monthlyRevenue.GetTotalRevenue(RevenueType.VisitorFee_Student)</td>
+            <td>@monthlyRevenue.GetTotalPeople(RevenueType.VisitorFee_Nepali)</td>
+            <td>@monthlyRevenue.GetTotalRevenue(RevenueType.VisitorFee_Nepali)</td>
+            <td>@monthlyRevenue.GetTotalPeople(RevenueType.VisitorFee_SAARC)</td>
+            <td>@monthlyRevenue.GetTotalRevenue(RevenueType.VisitorFee_SAARC)</td>
+            <td>@monthlyRevenue.GetTotalPeople(RevenueType.VisitorFee_Foreigner)</td>
+            <td>@monthlyRevenue.GetTotalRevenue(RevenueType.VisitorFee_Foreigner)</td>
+
+            <td>@monthlyRevenue.GetTotalPeople(RevenueType.CameraFee_Nepali)</td>
+            <td>@monthlyRevenue.GetTotalRevenue(RevenueType.CameraFee_Nepali)</td>
+            <td>@monthlyRevenue.GetTotalPeople(RevenueType.CameraFee_SAARC)</td>
+            <td>@monthlyRevenue.GetTotalRevenue(RevenueType.CameraFee_SAARC)</td>
+            <td>@monthlyRevenue.GetTotalPeople(RevenueType.CameraFee_Foreigner)</td>
+            <td>@monthlyRevenue.GetTotalRevenue(RevenueType.CameraFee_Foreigner)</td>
+
+            <td>@monthlyRevenue.GetTotalPeople(RevenueType.VideoCameraFee_Nepali)</td>
+            <td>@monthlyRevenue.GetTotalRevenue(RevenueType.VideoCameraFee_Nepali)</td>
+            <td>@monthlyRevenue.GetTotalPeople(RevenueType.VideoCameraFee_SAARC)</td>
+            <td>@monthlyRevenue.GetTotalRevenue(RevenueType.VideoCameraFee_SAARC)</td>
+            <td>@monthlyRevenue.GetTotalPeople(RevenueType.VideoCameraFee_Foreigner)</td>
+            <td>@monthlyRevenue.GetTotalRevenue(RevenueType.VideoCameraFee_Foreigner)</td>
+
+            <td>@monthlyRevenue.TotalRevenue</td>
         </tr>
         <tr class="table-data">
             <th style="font-size: medium;">हालसम्मको जम्मा</th>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
-            <td>24796</td>
+            <td>@yearlyRevenue.GetTotalPeople(RevenueType.VisitorFee_Student)</td>
+            <td>@yearlyRevenue.GetTotalRevenue(RevenueType.VisitorFee_Student)</td>
+            <td>@yearlyRevenue.GetTotalPeople(RevenueType.VisitorFee_Nepali)</td>
+            <td>@yearlyRevenue.GetTotalRevenue(RevenueType.VisitorFee_Nepali)</td>
+            <td>@yearlyRevenue.GetTotalPeople(RevenueType.VisitorFee_SAARC)</td>
+            <td>@yearlyRevenue.GetTotalRevenue(RevenueType.VisitorFee_SAARC)</td>
+            <td>@yearlyRevenue.GetTotalPeople(RevenueType.VisitorFee_Foreigner)</td>
+            <td>@yearlyRevenue.GetTotalRevenue(RevenueType.VisitorFee_Foreigner)</td>
+
+            <td>@yearlyRevenue.GetTotalPeople(RevenueType.CameraFee_Nepali)</td>
+            <td>@yearlyRevenue.GetTotalRevenue(RevenueType.CameraFee_Nepali)</td>
+            <td>@yearlyRevenue.GetTotalPeople(RevenueType.CameraFee_SAARC)</td>
+            <td>@yearlyRevenue.GetTotalRevenue(RevenueType.CameraFee_SAARC)</td>
+            <td>@yearlyRevenue.GetTotalPeople(RevenueType.CameraFee_Foreigner)</td>
+            <td>@yearlyRevenue.GetTotalRevenue(RevenueType.CameraFee_Foreigner)</td>
+
+            <td>@yearlyRevenue.GetTotalRevenue(RevenueType.VideoCameraFee_Nepali)</td>
+            <td>@yearlyRevenue.GetTotalPeople(RevenueType.VideoCameraFee_SAARC)</td>
+            <td>@yearlyRevenue.GetTotalRevenue(RevenueType.VideoCameraFee_SAARC)</td>
+            <td>@yearlyRevenue.GetTotalPeople(RevenueType.VideoCameraFee_Foreigner)</td>
+            <td>@yearlyRevenue.GetTotalRevenue(RevenueType.VideoCameraFee_Foreigner)</td>
+            <td>@yearlyRevenue.GetTotalPeople(RevenueType.VideoCameraFee_Nepali)</td>
+
+            <td>@yearlyRevenue.TotalRevenue</td>
         </tr>
         <tr>
             <th>कैफियत</th>
@@ -190,10 +203,23 @@
 
 <style>
     .table-data{
-        font-size: xx-small;
+    font-size: xx-small;
     }
 </style>
 
 @code {
+    YearlyRevenue yearlyRevenue;
+    MonthlyRevenue monthlyRevenue;
+    MonthlyRevenue previousMonthlyRevenue;
+
+    DailyRevenue dailyRevenue;
+
+    protected override async void OnInitialized(){
+        yearlyRevenue = await revenueService.GetYearlyRevenueAsync(dateConversionService.getCurrentDate().Year);
+        monthlyRevenue = await revenueService.GetMonthlyRevenueAsync(dateConversionService.getCurrentDate().Year,(NepaliMonth) dateConversionService.getCurrentDate().Month);
+        previousMonthlyRevenue = await revenueService.GetMonthlyRevenueAsync(dateConversionService.getCurrentDate().Year, (NepaliMonth)dateConversionService.getCurrentDate().Month -1);
+
+        dailyRevenue = await revenueService.GetOrCreateDailyRevenueAsync(dateConversionService.getCurrentDate());
+    }
 
 }

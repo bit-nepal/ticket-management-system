@@ -46,19 +46,25 @@ public class TicketService
 
   public async Task<bool> FinalizeTicket(Ticket ticket)
   {
-    ticket.TotalPrice = CalculateTotalPrice(ticket);
-    ticket.BarCodeData = GenerateTicketCode();
-    ticket.NepaliDate = "2";
-    bool result;
-    Console.WriteLine(GenerateTicketCode());
-    if (await CreateTicket(ticket))
-    {
-      ticket.TicketNo = ticket.Id;
-      Console.WriteLine("PRINT" + ticket.TimeStamp.Date);
-      result = await _printerService.PrintTicket(ticket);
-    }
-    await _revenueService.AddTicketSaleAsync(ticket);
-    return result;
+        using var transaction = _localDbContext.Database.BeginTransaction();
+        try
+        {
+            ticket.TotalPrice = CalculateTotalPrice(ticket);
+            ticket.BarCodeData = GenerateTicketCode();
+            ticket.NepaliDate = "2";
+
+            if (!await CreateTicket(ticket)) { transaction.Dispose(); return false; }
+            ticket.TicketNo = ticket.Id;
+            if (!await _revenueService.AddTicketSaleAsync(ticket)){  transaction.Dispose(); return false; }
+            if (!await _printerService.PrintTicket(ticket)) { transaction.Dispose(); return false; }
+
+            transaction.Commit();
+            return true;
+        }catch(Exception e)
+        {
+            transaction.Dispose();
+            return false;
+        }
   }
   public async Task<bool> CreateTicket(Ticket ticket)
   {
