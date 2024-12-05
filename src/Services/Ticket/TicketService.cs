@@ -10,15 +10,18 @@ public class TicketService
   private TicketPricingConfig _pricingConfig;
   private IPrinterService _printerService;
   private LocalDbContext _localDbContext;
+  private RevenueService _revenueService;
 
   public TicketService(
       IOptions<TicketPricingConfig> pricingConfig,
       IPrinterService printerService,
+  RevenueService revenueService,
       LocalDbContext localDbContext)
   {
     _pricingConfig = pricingConfig.Value;
     _printerService = printerService;
     _localDbContext = localDbContext;
+    _revenueService = revenueService;
   }
 
   public int GetBaseTicketPrice(Nationality nationality, PersonType personType)
@@ -46,13 +49,16 @@ public class TicketService
     ticket.TotalPrice = CalculateTotalPrice(ticket);
     ticket.BarCodeData = GenerateTicketCode();
     ticket.NepaliDate = "2";
+    bool result;
     Console.WriteLine(GenerateTicketCode());
     if (await CreateTicket(ticket))
     {
       ticket.TicketNo = ticket.Id;
-      return await _printerService.PrintTicket(ticket);
+      Console.WriteLine("PRINT" + ticket.TimeStamp.Date);
+      result = await _printerService.PrintTicket(ticket);
     }
-    return false;
+    await _revenueService.AddTicketSaleAsync(ticket);
+    return result;
   }
   public async Task<bool> CreateTicket(Ticket ticket)
   {
