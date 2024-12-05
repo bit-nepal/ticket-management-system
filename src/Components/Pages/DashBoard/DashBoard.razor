@@ -31,7 +31,7 @@ else
         <p>Total Revenue This Year: @yearlyRevenue?.TotalRevenue</p>
     </div>
 
-   }
+}
 @code {
     private bool isLoading = true;
     private DailyRevenue? dailyRevenue;
@@ -43,10 +43,10 @@ else
         isLoading = true;
 
         // Fetch today's date
-        var todayNepaliDate = new NepaliDate { Year = 2081, Month = (int)NepaliMonth.Mangsir , Day = 20 }; // Example date
+        var todayNepaliDate = new NepaliDate { Year = 2081, Month = 8 , Day = 20 }; // Example date
         var currentMonth = todayNepaliDate.Month;
         var currentYear = todayNepaliDate.Year;
-
+        Console.WriteLine("FETCHING DATA FOR:" + todayNepaliDate);
         // Fetch data
         dailyRevenue = await revenueService.GetOrCreateDailyRevenueAsync(todayNepaliDate);
         monthlyRevenue = await revenueService.GetMonthlyRevenueAsync(currentYear, (NepaliMonth)currentMonth);

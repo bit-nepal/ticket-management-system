@@ -11,7 +11,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Components\Pages\Revenue\RevenueEntry.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="wwwroot\9342343-XOPMUXRJ-7.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\Pages\Revenue\RevenueEntry.cs" />
   </ItemGroup>
 
   <ItemGroup>

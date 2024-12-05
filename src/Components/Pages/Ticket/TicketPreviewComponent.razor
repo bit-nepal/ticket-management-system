@@ -1,0 +1,16 @@
+﻿<div class="row">
+    <div class="col-5 col-md-3 text-end">Employee Id :</div>
+    <div class="col-7 col-md-9">@ticket.Nationality</div>
+</div>
+<div class="row">
+    <div class="col-5 col-md-3 text-end">First Name :</div>
+    <div class="col-7 col-md-9">@ticket?.PersonType</div>
+</div>
+<div class="row">
+    <div class="col-5 col-md-3 text-end">Last Name :</div>
+    <div class="col-7 col-md-9">@ticket?.TotalPrice</div>
+</div>
+
+@code {
+    [Parameter] public tms.Data.Ticket ticket { get; set; }
+}
