@@ -20,7 +20,7 @@ public class RevenueService
   {
     var bsDate = _dateConversionService.ConvertEnglishDateToNepaliDate(ticket.TimeStamp.Date);
     // Get or create daily revenue
-    var dailyRevenue = await GetOrCreateDailyRevenueAsync(ticket.TimeStamp.Date, bsDate);
+    var dailyRevenue = await GetOrCreateDailyRevenueAsync(bsDate);
     // Update revenue cells
     foreach (var addOn in ticket.AddOns)
     {
@@ -45,8 +45,10 @@ public class RevenueService
   }
 
 
-  public async Task<DailyRevenue> GetOrCreateDailyRevenueAsync(DateTime dateAD, NepaliDate dateBS)
+
+  public async Task<DailyRevenue> GetOrCreateDailyRevenueAsync(NepaliDate dateBS)
   {
+    var dateAD = _dateConversionService.ConvertNepaliDateToEnglishDate(dateBS);
     var dailyRevenue = await _context.DailyRevenues
         .Include(dr => dr.RevenueCells)
         .FirstOrDefaultAsync(dr => dr.DateAD == dateAD);
@@ -56,7 +58,6 @@ public class RevenueService
       dailyRevenue = new DailyRevenue { DateAD = dateAD, DateBS = dateBS };
       _context.DailyRevenues.Add(dailyRevenue);
     }
-
     return dailyRevenue;
   }
 
