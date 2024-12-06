@@ -1,4 +1,5 @@
 ﻿@page "/verification"
+@inject TicketService ticketService;
 
 <Offcanvas 
 @ref="offcanvas" 
@@ -60,12 +61,12 @@ else
     }
 
     @@media (max-width: 576px) {
-        .my-card-container-green, .my-card-container-red
+    .my-card-container-green, .my-card-container-red
     {
-        padding: 1rem; /* Add padding for smaller screens */
-        font-size: 1rem; /* Adjust text size */
-        width: 19rem;
-        margin: auto;
+    padding: 1rem; /* Add padding for smaller screens */
+    font-size: 1rem; /* Adjust text size */
+    width: 19rem;
+    margin: auto;
     }
 
     }
@@ -77,6 +78,7 @@ else
 Current value: @barCodeData
 @code{
     private bool IsValid;
+    private Ticket?  Ticket;
     private string barCodeData;
     private Offcanvas? offcanvas;
     private ElementReference barCodeInput;
@@ -93,10 +95,11 @@ Current value: @barCodeData
         barCodeInput.FocusAsync();
     }
 
-    public void Enter(KeyboardEventArgs e)
+    public async void Enter(KeyboardEventArgs e)
     {
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
+            await offcanvas.ShowAsync();
             ValidateBarCode();
         }
     }
@@ -104,7 +107,10 @@ Current value: @barCodeData
     private async void ValidateBarCode()
     {
         Console.WriteLine($"Validating BarCode: {barCodeData}");
-        IsValid = barCodeData == "123456";
+        var ticket = await ticketService.VerifyTicket(barCodeData) ;
+        IsValid = ticket is not null;
         barCodeData = String.Empty;
+        await offcanvas.HideAsync();
+
     }
 }

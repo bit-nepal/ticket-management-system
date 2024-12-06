@@ -17,6 +17,8 @@ public class LocalDbContext : DbContext
        {
          entity.OwnsOne(d => d.DateBS); // Configures NepaliDate as a complex type
        });
+
+        modelBuilder.Entity<Ticket>(entity => entity.OwnsOne(d => d.NepaliDate));
     modelBuilder.Entity<DailyRevenue>()
         .HasOne(dr => dr.MonthlyRevenue)
         .WithMany(mr => mr.DailyRevenues)

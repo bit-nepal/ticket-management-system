@@ -1,16 +1,27 @@
-﻿<div class="row">
-    <div class="col-5 col-md-3 text-end">Employee Id :</div>
-    <div class="col-7 col-md-9">@ticket.Nationality</div>
+﻿@inject TicketService tickerService;
+<div class="row">
+    <div class="col-5 col-md-3 text-start">Nationaility:</div>
+    <div class="col-7 col-md-9">
+        @ticket.Nationality &nbsp;
+        @if(ticket.Nationality == Nationality.Nepali && ticket.PersonType == PersonType.Student){
+            @ticket.PersonType;
+        }
+    </div>
 </div>
 <div class="row">
-    <div class="col-5 col-md-3 text-end">First Name :</div>
-    <div class="col-7 col-md-9">@ticket?.PersonType</div>
+    <div class="col-5 col-md-3 text-start">No of People :</div>
+    <div class="col-7 col-md-9">@ticket?.NoOfPeople</div>
 </div>
 <div class="row">
-    <div class="col-5 col-md-3 text-end">Last Name :</div>
-    <div class="col-7 col-md-9">@ticket?.TotalPrice</div>
+    <div class="col-5 col-md-3 text-start">Total Price :</div>
+    <div class="col-7 col-md-9">NRs @ticket?.TotalPrice</div>
 </div>
 
 @code {
     [Parameter] public tms.Data.Ticket ticket { get; set; }
+    protected override Task OnInitializedAsync()
+    {
+        ticket.TotalPrice = tickerService.CalculateTotalPrice(ticket);
+        return base.OnInitializedAsync();
+    }
 }
