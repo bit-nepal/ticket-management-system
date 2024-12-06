@@ -9,7 +9,7 @@ public class Ticket
   public int Id { get; set; }
   public int TicketNo { get; set; }
   public DateTime TimeStamp { get; set; }
-  public String NepaliDate { get; set; } = null!;
+  public NepaliDate NepaliDate { get; set; } = null!;
   public String BarCodeData { get; set; } = null!;
   public Nationality Nationality { get; set; }
   public PersonType PersonType { get; set; }

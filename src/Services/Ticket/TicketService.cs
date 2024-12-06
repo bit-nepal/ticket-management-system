@@ -11,20 +11,22 @@ public class TicketService
   private IPrinterService _printerService;
   private LocalDbContext _localDbContext;
   private RevenueService _revenueService;
+    private DateConversionService _dateConversionService;
+    public TicketService(
+        IOptions<TicketPricingConfig> pricingConfig,
+        IPrinterService printerService,
+        RevenueService revenueService,
+        LocalDbContext localDbContext,
+        DateConversionService dateConversionService)
+    {
+        _pricingConfig = pricingConfig.Value;
+        _printerService = printerService;
+        _localDbContext = localDbContext;
+        _revenueService = revenueService;
+        _dateConversionService = dateConversionService;
+    }
 
-  public TicketService(
-      IOptions<TicketPricingConfig> pricingConfig,
-      IPrinterService printerService,
-  RevenueService revenueService,
-      LocalDbContext localDbContext)
-  {
-    _pricingConfig = pricingConfig.Value;
-    _printerService = printerService;
-    _localDbContext = localDbContext;
-    _revenueService = revenueService;
-  }
-
-  public int GetBaseTicketPrice(Nationality nationality, PersonType personType)
+    public int GetBaseTicketPrice(Nationality nationality, PersonType personType)
   {
     return _pricingConfig.Nationalities[nationality].BasePrice[personType];
   }
@@ -51,7 +53,7 @@ public class TicketService
         {
             ticket.TotalPrice = CalculateTotalPrice(ticket);
             ticket.BarCodeData = GenerateTicketCode();
-            ticket.NepaliDate = "2";
+            ticket.NepaliDate = _dateConversionService.ConvertEnglishDateToNepaliDate(ticket.TimeStamp);
 
             if (!await CreateTicket(ticket)) { transaction.Dispose(); return false; }
             ticket.TicketNo = ticket.Id;
@@ -76,6 +78,13 @@ public class TicketService
     return _pricingConfig;
   }
 
+    public async Task<Ticket?> VerifyTicket(string BarCode)
+    {
+        return _localDbContext.Tickets
+            .Where(x => x.BarCodeData == BarCode)
+            .Where(x => x.TimeStamp.Day == DateTime.Now.Day)
+            .FirstOrDefault();
+    }
   public void UpdatePricingConfig(TicketPricingConfig updatedConfig)
   {
     _pricingConfig = updatedConfig;
