@@ -4,33 +4,28 @@ public class DailyRevenue
 
   public DateTime DateAD { get; set; } // Gregorian date
   public NepaliDate DateBS { get; set; } // Nepali date
-    public int? TicketNoStart { get; set; } // First ticket number of the day
-    public int? TicketNoEnd { get; set; } // Last ticket number of the day
+  public int? TicketNoStart { get; set; } // First ticket number of the day
+  public int? TicketNoEnd { get; set; } // Last ticket number of the day
 
-    public int? GetTotalPeople(RevenueType revenueType)
+  public int? GetTotalPeople(RevenueType revenueType)
+  {
+    int result = RevenueCells.Where(x => x.Type == revenueType).Sum(rc => rc.NoOfPeople);
+    return result;
+  }
+  public int? GetTotalRevenue(RevenueType revenueType)
+  {
+    if (revenueType == RevenueType.CameraFee_Nepali)
     {
-        int result = RevenueCells.Where(x => x.Type == revenueType).Sum(rc => rc.NoOfPeople);
-        return result;
+
     }
-    public int? GetTotalRevenue(RevenueType revenueType)
+    int result = RevenueCells.Where(x => x.Type == revenueType).Sum(rc => rc.TotalAmount);
+    if (revenueType == RevenueType.CameraFee_Nepali)
     {
-        if(revenueType == RevenueType.CameraFee_Nepali)
-        {
-
-        }
-        int result = RevenueCells.Where(x => x.Type == revenueType).Sum(rc => rc.TotalAmount);
-        if (revenueType == RevenueType.CameraFee_Nepali)
-        {
-            var r = RevenueCells.Where(x => x.Type == revenueType);
-            foreach(var x in r)
-            {
-                Console.WriteLine("RRRRRRRRRRRRRRRRRRRRRR "+ x.TotalAmount);
-            }
-
-        }
-        return result;
+      var r = RevenueCells.Where(x => x.Type == revenueType);
     }
-    public List<RevenueCell> RevenueCells { get; set; } = new();
+    return result;
+  }
+  public List<RevenueCell> RevenueCells { get; set; } = new();
 
   public int TotalPeople => RevenueCells.Sum(rc => rc.NoOfPeople);
   public int TotalRevenue => RevenueCells.Sum(rc => rc.TotalAmount);

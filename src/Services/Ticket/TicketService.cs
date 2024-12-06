@@ -11,22 +11,22 @@ public class TicketService
   private IPrinterService _printerService;
   private LocalDbContext _localDbContext;
   private RevenueService _revenueService;
-    private DateConversionService _dateConversionService;
-    public TicketService(
-        IOptions<TicketPricingConfig> pricingConfig,
-        IPrinterService printerService,
-        RevenueService revenueService,
-        LocalDbContext localDbContext,
-        DateConversionService dateConversionService)
-    {
-        _pricingConfig = pricingConfig.Value;
-        _printerService = printerService;
-        _localDbContext = localDbContext;
-        _revenueService = revenueService;
-        _dateConversionService = dateConversionService;
-    }
+  private DateConversionService _dateConversionService;
+  public TicketService(
+      IOptions<TicketPricingConfig> pricingConfig,
+      IPrinterService printerService,
+      RevenueService revenueService,
+      LocalDbContext localDbContext,
+      DateConversionService dateConversionService)
+  {
+    _pricingConfig = pricingConfig.Value;
+    _printerService = printerService;
+    _localDbContext = localDbContext;
+    _revenueService = revenueService;
+    _dateConversionService = dateConversionService;
+  }
 
-    public int GetBaseTicketPrice(Nationality nationality, PersonType personType)
+  public int GetBaseTicketPrice(Nationality nationality, PersonType personType)
   {
     return _pricingConfig.Nationalities[nationality].BasePrice[personType];
   }
@@ -48,25 +48,30 @@ public class TicketService
 
   public async Task<bool> FinalizeTicket(Ticket ticket)
   {
-        using var transaction = _localDbContext.Database.BeginTransaction();
-        try
-        {
-            ticket.TotalPrice = CalculateTotalPrice(ticket);
-            ticket.BarCodeData = GenerateTicketCode();
-            ticket.NepaliDate = _dateConversionService.ConvertEnglishDateToNepaliDate(ticket.TimeStamp);
+    using var transaction = _localDbContext.Database.BeginTransaction();
+    try
+    {
+      ticket.TotalPrice = CalculateTotalPrice(ticket);
+      ticket.BarCodeData = GenerateTicketCode();
+      ticket.NepaliDate = _dateConversionService.ConvertEnglishDateToNepaliDate(ticket.TimeStamp);
+      foreach (var addOn in ticket.AddOns)
+      {
+        addOn.TotalPrice = addOn.Quantity * GetAddOnFee(ticket.Nationality, addOn.AddOnType);
+      }
 
-            if (!await CreateTicket(ticket)) { transaction.Dispose(); return false; }
-            ticket.TicketNo = ticket.Id;
-            if (!await _revenueService.AddTicketSaleAsync(ticket)){  transaction.Dispose(); return false; }
-            if (!await _printerService.PrintTicket(ticket)) { transaction.Dispose(); return false; }
+      if (!await CreateTicket(ticket)) { transaction.Dispose(); return false; }
+      ticket.TicketNo = ticket.Id;
+      if (!await _revenueService.AddTicketSaleAsync(ticket)) { transaction.Dispose(); return false; }
+      if (!await _printerService.PrintTicket(ticket)) { transaction.Commit(); return false; }
 
-            transaction.Commit();
-            return true;
-        }catch(Exception e)
-        {
-            transaction.Dispose();
-            return false;
-        }
+      transaction.Commit();
+      return true;
+    }
+    catch (Exception e)
+    {
+      transaction.Dispose();
+      return false;
+    }
   }
   public async Task<bool> CreateTicket(Ticket ticket)
   {
@@ -78,13 +83,13 @@ public class TicketService
     return _pricingConfig;
   }
 
-    public async Task<Ticket?> VerifyTicket(string BarCode)
-    {
-        return _localDbContext.Tickets
-            .Where(x => x.BarCodeData == BarCode)
-            .Where(x => x.TimeStamp.Day == DateTime.Now.Day)
-            .FirstOrDefault();
-    }
+  public async Task<Ticket?> VerifyTicket(string BarCode)
+  {
+    return _localDbContext.Tickets
+        .Where(x => x.BarCodeData == BarCode)
+        .Where(x => x.TimeStamp.Day == DateTime.Now.Day)
+        .FirstOrDefault();
+  }
   public void UpdatePricingConfig(TicketPricingConfig updatedConfig)
   {
     _pricingConfig = updatedConfig;
