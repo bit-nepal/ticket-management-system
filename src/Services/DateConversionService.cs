@@ -7,10 +7,11 @@ public class DateConversionService
     _dateMap = InitializeDateMap();
   }
 
-    public NepaliDate getCurrentDate()
-    {
-        return ConvertEnglishDateToNepaliDate(DateTime.Now);
-    }
+  public NepaliDate getCurrentDate()
+  {
+    // return ConvertEnglishDateToNepaliDate(DateTime.Now);
+    return new NepaliDate() { Year = 2081, Month = (int)NepaliMonth.Falgun, Day = 21 };
+  }
   private Dictionary<int, NepaliYearData> InitializeDateMap()
   {
     return new Dictionary<int, NepaliYearData>

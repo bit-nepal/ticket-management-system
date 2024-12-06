@@ -23,7 +23,6 @@ public class RevenueService
       var bsDate = _dateConversionService.ConvertEnglishDateToNepaliDate(DateTime.Now);
 
       // Get or create daily revenue
-      Console.WriteLine("================== ADDING TICKET TO REVENUE " + bsDate);
       var dailyRevenue = await GetOrCreateDailyRevenueAsync(bsDate);
 
       // Update ticket number range
@@ -75,8 +74,6 @@ public class RevenueService
         {
           addOnCell.NoOfPeople += addOn.Quantity;
           addOnCell.TotalAmount += addOn.TotalPrice;
-
-          Console.WriteLine("rrrrrrrrrrrrrrrrrr " + addOn.TotalPrice);
         }
       }
 
@@ -124,24 +121,15 @@ public class RevenueService
         DailyRevenues = new List<DailyRevenue>()
       };
       _context.MonthlyRevenues.Add(monthlyRevenue);
-      Console.WriteLine("=================");
-
       await _context.SaveChangesAsync(); // Save to get MonthlyRevenue.Id
-      Console.WriteLine("=================");
-
     }
-    Console.WriteLine("=================");
 
     // Step 3: Ensure the DailyRevenue exists
-    Console.WriteLine(":::::DATEBS " + dateBS.Year + ":" + dateBS.Month + ":" + dateBS.Day);
     var dailyRevenue = await _context.DailyRevenues
         .Include(dr => dr.RevenueCells)
         .FirstOrDefaultAsync(dr => dr.DateBS.Year == dateBS.Year &&
                                    dr.DateBS.Month == dateBS.Month &&
                                    dr.DateBS.Day == dateBS.Day);
-
-
-
     if (dailyRevenue == null)
     {
       Console.WriteLine("ADDING DAILY REVEUE CAUSE IT DOESNT EXIST");
@@ -154,9 +142,6 @@ public class RevenueService
       _context.DailyRevenues.Add(dailyRevenue);
       await _context.SaveChangesAsync();
     }
-    else Console.WriteLine("================= DAILY REVEUE DOES EXIST");
-
-
     return dailyRevenue;
   }
 
