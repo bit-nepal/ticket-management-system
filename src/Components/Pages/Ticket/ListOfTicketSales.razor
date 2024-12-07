@@ -1,0 +1,66 @@
+﻿@page "/list-of-tickets";
+<h3>ListOfTicketSales</h3>
+
+@page "/tickets"
+@using tms.Data
+@inject TicketService TicketService
+
+<Grid TItem="tms.Data.Ticket"
+      Class="table table-hover table-bordered table-striped"
+      DataProvider="TicketsDataProvider"
+      AllowFiltering="true"
+      AllowPaging="true"
+      PageSize="5"
+      AllowSorting="true"
+      AllowSelection="false"
+      SelectionMode="GridSelectionMode.Multiple"
+      SelectedItemsChanged="OnSelectedItemsChanged"
+      Responsive="true">
+
+    <GridColumns>
+        <GridColumn TItem="tms.Data.Ticket" HeaderText="Ticket No" PropertyName="TicketNo" SortKeySelector="item => item.TicketNo">
+            @context.TicketNo
+        </GridColumn>
+        <GridColumn TItem="tms.Data.Ticket" HeaderText="Timestamp" PropertyName="TimeStamp" SortKeySelector="item => item.TimeStamp">
+            @context.TimeStamp.ToString("g")
+        </GridColumn>
+        <GridColumn TItem="tms.Data.Ticket" HeaderText="Nationality" PropertyName="Nationality">
+            @context.Nationality
+        </GridColumn>
+        <GridColumn TItem="tms.Data.Ticket" HeaderText="Person Type" PropertyName="PersonType">
+            @context.PersonType
+        </GridColumn>
+        <GridColumn TItem="tms.Data.Ticket" HeaderText="No. of People" PropertyName="NoOfPeople">
+            @context.NoOfPeople
+        </GridColumn>
+        <GridColumn TItem="tms.Data.Ticket" HeaderText="Total Price" PropertyName="TotalPrice">
+            NRs: @context.TotalPrice
+        </GridColumn>
+        <GridColumn TItem="tms.Data.Ticket" HeaderText="Group Visit" PropertyName="IsGroupVisit">
+            @(context.IsGroupVisit ? "Yes" : "No")
+        </GridColumn>
+    </GridColumns>
+</Grid>
+
+
+
+@code {
+    private IEnumerable<tms.Data.Ticket> tickets = Enumerable.Empty<tms.Data.Ticket>();
+    private HashSet<tms.Data.Ticket> selectedTickets = new();
+
+    private async Task<GridDataProviderResult<tms.Data.Ticket>> TicketsDataProvider(GridDataProviderRequest<tms.Data.Ticket> request)
+    {
+        if (tickets is null || !tickets.Any()) // Load tickets only once
+        {
+            tickets = await TicketService.GetTicketsAsync();
+        }
+
+        return await Task.FromResult(request.ApplyTo(tickets));
+    }
+
+    private Task OnSelectedItemsChanged(HashSet<tms.Data.Ticket> tickets)
+    {
+        selectedTickets = tickets ?? new();
+        return Task.CompletedTask;
+    }
+}

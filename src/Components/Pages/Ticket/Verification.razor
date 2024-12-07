@@ -24,8 +24,37 @@ style="position:absolute;
         <CardHeader Class="rounded-3">Ticket Verification: VALID</CardHeader>
         <CardBody>
             <CardTitle>The ticket is valid.</CardTitle>
-            <CardText Class="card-content">You can enter the premises.</CardText>
+            <CardText Class="card-content">You can enter the museum premises.</CardText>
         </CardBody>
+    </Card>
+
+    <h3>Verified Ticket Details:</h3>
+
+    <Card Style="width:18rem;">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                Nationality: @ticket?.Nationality &nbsp; @if (ticket.Nationality == Nationality.Nepali && ticket.PersonType == PersonType.Student)
+                {
+                    @ticket.PersonType;                }
+            </li>
+            @if (ticket.IsGroupVisit)
+            {
+                <li class="list-group-item">No. of people: @ticket.NoOfPeople</li>
+                <li class="list-group-item">Group Name: @ticket.CustomText</li>
+                <li class="list-group-item">Camera: @ticket.AddOns.FirstOrDefault(x => x.AddOnType == AddOnType.Camera)?.Quantity</li>
+                <li class="list-group-item">VideoCamera: @ticket.AddOns.FirstOrDefault(x => x.AddOnType == AddOnType.VideoCamera)?.Quantity</li>
+            }else{
+                <li class="list-group-item"> 
+                    Camera : 
+                    @(ticket.AddOns.FirstOrDefault(x => x.AddOnType == AddOnType.Camera)?.TotalPrice > 0 ? "✓" : "✕")
+                </li>
+                <li class="list-group-item">
+                    VideoCamera :
+                    @(ticket.AddOns.FirstOrDefault(x => x.AddOnType == AddOnType.VideoCamera)?.TotalPrice > 0 ? "✓" : "✕")
+                </li>
+            }
+            }
+        </ul>
     </Card>
 }
 else
@@ -78,7 +107,7 @@ else
 Current value: @barCodeData
 @code{
     private bool IsValid;
-    private Ticket?  Ticket;
+    private tms.Data.Ticket?  ticket;
     private string barCodeData;
     private Offcanvas? offcanvas;
     private ElementReference barCodeInput;
@@ -107,10 +136,12 @@ Current value: @barCodeData
     private async void ValidateBarCode()
     {
         Console.WriteLine($"Validating BarCode: {barCodeData}");
-        var ticket = await ticketService.VerifyTicket(barCodeData) ;
+        ticket = await ticketService.VerifyTicket(barCodeData) ;
         IsValid = ticket is not null;
         barCodeData = String.Empty;
-        await offcanvas.HideAsync();
-
+        if (offcanvas is not null)
+        {
+            await offcanvas.HideAsync();
+        }
     }
 }

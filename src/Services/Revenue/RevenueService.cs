@@ -20,21 +20,26 @@ public class RevenueService
   {
     try
     {
-      var bsDate = _dateConversionService.ConvertEnglishDateToNepaliDate(DateTime.Now);
+        Console.WriteLine("================== ADDING REVENUE AND FINALIZING TICKET =====================")
+        var bsDate = _dateConversionService.ConvertEnglishDateToNepaliDate(DateTime.Now);
 
-      // Get or create daily revenue
-      var dailyRevenue = await GetOrCreateDailyRevenueAsync(bsDate);
+        // Get or create daily revenue
+        var dailyRevenue = await GetOrCreateDailyRevenueAsync(bsDate);
 
-      // Update ticket number range
-      if (!dailyRevenue.TicketNoStart.HasValue || ticket.TicketNo < dailyRevenue.TicketNoStart.Value)
-      {
-        dailyRevenue.TicketNoStart = ticket.TicketNo;
-      }
+        // Update ticket number range
+        if (!dailyRevenue.TicketNoStart.HasValue || ticket.TicketNo < dailyRevenue.TicketNoStart.Value)
+        {
+            Console.WriteLine("==================Ticker no" + ticket.TicketNo);
+            dailyRevenue.TicketNoStart = ticket.TicketNo;
+        }else
+        {
+            Console.WriteLine("================= Ticket nO start doesnt need to be update =====================")
+        }
 
-      if (!dailyRevenue.TicketNoEnd.HasValue || ticket.TicketNo > dailyRevenue.TicketNoEnd.Value)
-      {
+        if(!dailyRevenue.TicketNoEnd.HasValue || ticket.TicketNo > dailyRevenue.TicketNoEnd.Value)
+        {
         dailyRevenue.TicketNoEnd = ticket.TicketNo;
-      }
+        }
 
       // Update visitor fee
       var visitorType = GetVisitorRevenueType(ticket.Nationality, ticket.PersonType);
@@ -77,8 +82,10 @@ public class RevenueService
         }
       }
 
-      // Save changes to the database
-      return await _context.SaveChangesAsync() > 0;
+        Console.WriteLine("==================DONE ADDING REVENUE AND FINALIZING TICKET=====================");
+
+        // Save changes to the database
+        return await _context.SaveChangesAsync() > 0;
     }
     catch
     {
