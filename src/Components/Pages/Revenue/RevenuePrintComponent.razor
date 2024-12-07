@@ -36,7 +36,7 @@
     <thead class="table-light">
         <tr style="border:1px solid black;">
             <th scope="col">टिकट नं</th>
-            <th scope="col" colspan="21"> <span class="fw-bold">________</span> देखि<span class="fw-bold">________</span>  सम्म </th>
+            <th scope="col" colspan="21"> <span class="fw-bold"> @dailyRevenue.TicketNoStart ________</span> देखि<span class="fw-bold">@dailyRevenue.TicketNoEnd ________</span>  सम्म </th>
         </tr>
         <tr style="border:1px solid black;">
             <th scope="col" rowspan="2" class="align-middle">विवरण</th>
@@ -237,6 +237,8 @@
         yearlyRevenue = await revenueService.GetYearlyRevenueAsync(currentDateInBs.Year);
         monthlyRevenue = await revenueService.GetMonthlyRevenueAsync(currentDateInBs.Year,(NepaliMonth) currentDateInBs.Month);
 
+        Console.WriteLine("DAILY START : " + dailyRevenue.TicketNoStart);
+        Console.WriteLine("DAILY END : " + dailyRevenue.TicketNoEnd);
     }
 
 }

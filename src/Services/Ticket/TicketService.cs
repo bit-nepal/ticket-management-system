@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using tms.Configuration;
 using tms.Data;
@@ -46,6 +47,10 @@ public class TicketService
         : basePrice + addOnFees;
   }
 
+ public async Task<IEnumerable<tms.Data.Ticket>> GetTicketsAsync()
+    {
+        return await _localDbContext.Tickets.ToListAsync();
+    }
   public async Task<bool> FinalizeTicket(Ticket ticket)
   {
     using var transaction = _localDbContext.Database.BeginTransaction();
