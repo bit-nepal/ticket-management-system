@@ -36,7 +36,14 @@
     <thead class="table-light">
         <tr style="border:1px solid black;">
             <th scope="col">टिकट नं</th>
-            <th scope="col" colspan="21"> <span class="fw-bold"> @dailyRevenue.TicketNoStart ________</span> देखि<span class="fw-bold">@dailyRevenue.TicketNoEnd ________</span>  सम्म </th>
+            <th scope="col" colspan="21"> 
+              <span class="fw-bold"> 
+                @(dailyRevenue.TicketNoStart?.ToString() ?? "NA")  ________
+              </span> देखि
+              <span class="fw-bold">
+                @(dailyRevenue.TicketNoEnd?.ToString() ?? "NA") ________
+              </span>  सम्म 
+            </th>
         </tr>
         <tr style="border:1px solid black;">
             <th scope="col" rowspan="2" class="align-middle">विवरण</th>

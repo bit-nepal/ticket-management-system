@@ -43,7 +43,7 @@ namespace tms.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("AddOn");
+                    b.ToTable("AddOn", (string)null);
                 });
 
             modelBuilder.Entity("DailyRevenue", b =>
@@ -68,7 +68,7 @@ namespace tms.Migrations
 
                     b.HasIndex("MonthlyRevenueId");
 
-                    b.ToTable("DailyRevenues");
+                    b.ToTable("DailyRevenues", (string)null);
                 });
 
             modelBuilder.Entity("MonthlyRevenue", b =>
@@ -90,7 +90,7 @@ namespace tms.Migrations
 
                     b.HasIndex("YearlyRevenueId");
 
-                    b.ToTable("MonthlyRevenues");
+                    b.ToTable("MonthlyRevenues", (string)null);
                 });
 
             modelBuilder.Entity("RevenueCell", b =>
@@ -115,7 +115,7 @@ namespace tms.Migrations
 
                     b.HasIndex("DailyRevenueId");
 
-                    b.ToTable("RevenueCells");
+                    b.ToTable("RevenueCells", (string)null);
                 });
 
             modelBuilder.Entity("YearlyRevenue", b =>
@@ -129,7 +129,7 @@ namespace tms.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("YearlyRevenues");
+                    b.ToTable("YearlyRevenues", (string)null);
                 });
 
             modelBuilder.Entity("tms.Data.Ticket", b =>
@@ -172,7 +172,7 @@ namespace tms.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tickets");
+                    b.ToTable("Tickets", (string)null);
                 });
 
             modelBuilder.Entity("AddOn", b =>
@@ -190,7 +190,7 @@ namespace tms.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("NepaliDate", "DateBS", b1 =>
+                    b.OwnsOne("DailyRevenue.DateBS#NepaliDate", "DateBS", b1 =>
                         {
                             b1.Property<int>("DailyRevenueId")
                                 .HasColumnType("INTEGER");
@@ -206,7 +206,7 @@ namespace tms.Migrations
 
                             b1.HasKey("DailyRevenueId");
 
-                            b1.ToTable("DailyRevenues");
+                            b1.ToTable("DailyRevenues", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("DailyRevenueId");
@@ -242,7 +242,7 @@ namespace tms.Migrations
 
             modelBuilder.Entity("tms.Data.Ticket", b =>
                 {
-                    b.OwnsOne("NepaliDate", "NepaliDate", b1 =>
+                    b.OwnsOne("tms.Data.Ticket.NepaliDate#NepaliDate", "NepaliDate", b1 =>
                         {
                             b1.Property<int>("TicketId")
                                 .HasColumnType("INTEGER");
@@ -258,7 +258,7 @@ namespace tms.Migrations
 
                             b1.HasKey("TicketId");
 
-                            b1.ToTable("Tickets");
+                            b1.ToTable("Tickets", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("TicketId");
