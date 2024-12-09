@@ -1,15 +1,15 @@
 public enum NepaliMonth
 {
-  Baisakh = 0,
-  Jestha = 1,
-  Ashadh = 2,
-  Shrawan = 3,
-  Bhadra = 4,
-  Ashwin = 5,
-  Kartik = 6,
-  Mangsir = 7,
-  Poush = 8,
-  Magh = 9,
-  Falgun = 10,
-  Chaitra = 11
-}
+  Baisakh = 1,
+  Jestha = 2,
+  Ashadh = 3,
+  Shrawan = 4,
+  Bhadra = 5,
+  Ashwin = 6,
+  Kartik = 7,
+  Mangsir = 8,
+  Poush = 9,
+  Magh = 10,
+  Falgun = 11,
+  Chaitra = 12
+} 

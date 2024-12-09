@@ -2,10 +2,12 @@
 @page "/"
 @inject TicketService ticketService;
 @inject ToastService ToastService;
-
+@inject NavigationManager navigator;
 <ConfirmDialog @ref="dialog" />
-<PageTitle>Ticket Creation</PageTitle>
-
+<Offcanvas @ref="offcanvas"
+UseStaticBackdrop="true"
+style="width: 0px;
+             height:0px;" />
 <Card class="my-card-container">
     <CardHeader class="bg-blue text-white text-center rounded-3">
         <h4 class="m-1">Ticket Creation Form</h4>
@@ -114,6 +116,7 @@
 
 @code {
     private ConfirmDialog dialog = default!;
+    private Offcanvas? offcanvas;
 
     tms.Data.Ticket ticket = new tms.Data.Ticket
     {
@@ -137,22 +140,16 @@
             confirmDialogOptions: options
         );
 
-        if (confirmation)
-        {
-            HandleValidSubmit();    
-        }
-        else
-        {
-            ToastService.Notify(new(ToastType.Info, $"Printing ticket canceled"));
-        }
+        if (confirmation) await HandleValidSubmit();    
+        else ToastService.Notify(new(ToastType.Info, $"Printing ticket canceled"));
     }
 
     private async Task HandleValidSubmit()
     {
-
+        await offcanvas.ShowAsync();
         SanitizeTicketData();
         PrintData();
-        if(await ticketService.FinalizeTicket(ticket))
+        if (await ticketService.FinalizeTicket(ticket))
         {
             ToastService.Notify(new(ToastType.Success, $"Ticket Printed Successfully."));
         }else
@@ -160,6 +157,9 @@
             ToastService.Notify(new(ToastType.Danger, $"Error: Printing Ticket"));
         }
         ClearForm();
+        Console.WriteLine("TICKET PROCESS COMPLETE");
+        navigator.NavigateTo("/ticket", true);
+        await offcanvas.HideAsync();
     }
 
     private AddOn GetOrCreateAddOn(AddOnType type)
@@ -183,6 +183,7 @@
         }
         ticket.TimeStamp = DateTime.Now;
     }
+
     private void PrintData()
     {
         Console.WriteLine("Nationality: " + ticket.Nationality);
@@ -200,14 +201,14 @@
     private void ClearForm()
     {
         ticket = new tms.Data.Ticket
-            {
-                NoOfPeople = 1,
-                AddOns = new List<AddOn>
         {
-            new AddOn { AddOnType = AddOnType.Camera, Quantity = 0 },
-            new AddOn { AddOnType = AddOnType.VideoCamera, Quantity = 0 }
-        }
-            };
+            NoOfPeople = 1,
+            AddOns = new List<AddOn>
+            {
+                new AddOn { AddOnType = AddOnType.Camera, Quantity = 0 },
+                new AddOn { AddOnType = AddOnType.VideoCamera, Quantity = 0 }
+            }
+        };
     }
 
     private void UIUpdated(){

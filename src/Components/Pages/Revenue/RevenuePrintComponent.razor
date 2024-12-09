@@ -9,10 +9,10 @@
         </div>
         <!-- Text Section -->
         <div class="col-md-8 text-center">
-            <p class="fw-bold mb-0" style="font-size:smaller;">नेपाल सरकार</p>
-            <p class="fw-bold mb-0" style="font-size:smaller;"> संस्कृति, पर्यटन तथा नागरिक उड्डयन मन्त्रालय</p>
-            <h6 class="fw-bold mb-0">पुरातत्व विभाग</h6>
-            <h4 class="fw-bold mb-2">राष्ट्रिय कला संग्रहालय, भक्तपुर</h4>
+            <p class="fw-bold mb-0" style="font-size:smaller;">@Constants.GOVERNMENT_NEPALI</p>
+            <p class="fw-bold mb-0" style="font-size:smaller;">@Constants.MINISTRY_NEPALI</p>
+            <h6 class="fw-bold mb-0">@Constants.DEPARTMENT_NEPALI</h6>
+            <h4 class="fw-bold mb-2">@Constants.MUSEUM_NAME_NEPALI, @Constants.MUSEUM_ADDRESS_CITY_NEPALI</h4>
             <h5 class="fw-bold mb-0">विषय : दैनिक राजस्व चलानी</h5>
         </div>
         <!-- Placeholder Section -->
@@ -38,10 +38,10 @@
             <th scope="col">टिकट नं</th>
             <th scope="col" colspan="21"> 
               <span class="fw-bold"> 
-                @(dailyRevenue.TicketNoStart?.ToString() ?? "NA")  ________
-              </span> देखि
+                @(dailyRevenue.TicketNoStart?.ToString() ?? "N/A")  &nbsp;&nbsp;&nbsp;
+              </span> देखि &nbsp;&nbsp;&nbsp;
               <span class="fw-bold">
-                @(dailyRevenue.TicketNoEnd?.ToString() ?? "NA") ________
+                    @(dailyRevenue.TicketNoEnd?.ToString() ?? "N/A") &nbsp;&nbsp;&nbsp;
               </span>  सम्म 
             </th>
         </tr>
@@ -206,7 +206,7 @@
         </tr>
         <tr style="border:1px solid black;">
             <th scope="col" >कैफियत</th>
-            <td colspan="21">This page contains sample text and data used for testing purposes only. </td>
+            <td colspan="21"> </td>
 
         </tr>
     </tbody>

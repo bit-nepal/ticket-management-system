@@ -7,6 +7,7 @@ using tms.Configuration;
 using Microsoft.Extensions.Options;
 using tms.Services.Printer;
 using System.Text.Json;
+using SixLabors.ImageSharp;
 
 var builder = WebApplication.CreateBuilder(args);
 // Load configuration
@@ -36,9 +37,9 @@ builder.Services.AddScoped<DateConversionService>();
 // Register SQLite DbContext for local database with EF Core
 builder.Services.AddDbContext<LocalDbContext>((serviceProvider, options) =>
 {
-  // var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
-  // string connString = $"Data Source={storageSettings.SQLiteDbPath}";
-  string connString = "Data Source=app.db";
+   var storageSettings = serviceProvider.GetRequiredService<IOptions<StorageSettings>>().Value;
+   string connString = $"Data Source={storageSettings.SQLiteDbPath};";
+  //string connString = "Data Source=app.db";
   Console.WriteLine("------------------------------------");
   Console.WriteLine(connString);
   options.UseSqlite(connString);
@@ -95,6 +96,8 @@ builder.Services.AddScoped<StorageFactory>();
 
 //Ticket 
 builder.Services.AddScoped<TicketService>();
+builder.Services.AddScoped<PriceService>();
+
 builder.Services.AddOptions<TicketPricingConfig>()
     .Configure<IConfiguration>((settings, configuration) =>
     {
@@ -121,6 +124,23 @@ app.UseAntiforgery();
 // Map Razor components
 app.MapRazorComponents<tms.Components.App>()
     .AddInteractiveServerRenderMode();
+
+
+var allowedIps = builder.Configuration.GetSection("AllowedIps").Get<string[]>();
+app.Use(async (context, next) =>
+{
+    var clientIp = context.Connection.RemoteIpAddress?.ToString();
+    Console.WriteLine($"INCOMING REQUEST FROM : {clientIp}");
+    if (clientIp != null && allowedIps.Contains(clientIp))
+    {
+        await next();
+    }
+    else
+    {
+        context.Response.StatusCode = 403; // Forbidden
+        await context.Response.WriteAsync("Access Denied");
+    }
+});
 
 app.Run();
 

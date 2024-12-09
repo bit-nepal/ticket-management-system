@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Options;
 using tms.Configuration;
 using tms.Data;
@@ -17,12 +18,12 @@ public class TicketService
       IOptions<TicketPricingConfig> pricingConfig,
       IPrinterService printerService,
       RevenueService revenueService,
-      LocalDbContext localDbContext,
+      LocalDbContext dbContext,
       DateConversionService dateConversionService)
   {
     _pricingConfig = pricingConfig.Value;
     _printerService = printerService;
-    _localDbContext = localDbContext;
+    _localDbContext = dbContext;
     _revenueService = revenueService;
     _dateConversionService = dateConversionService;
   }
@@ -49,10 +50,13 @@ public class TicketService
 
  public async Task<IEnumerable<tms.Data.Ticket>> GetTicketsAsync()
     {
+        //var _localDbContext = _localDbContextFactory.CreateDbContext();
         return await _localDbContext.Tickets.ToListAsync();
     }
   public async Task<bool> FinalizeTicket(Ticket ticket)
   {
+     //await using  var _localDbContext = _localDbContextFactory.CreateDbContext();
+
     using var transaction = _localDbContext.Database.BeginTransaction();
     try
     {
@@ -64,24 +68,47 @@ public class TicketService
         addOn.TotalPrice = addOn.Quantity * GetAddOnFee(ticket.Nationality, addOn.AddOnType);
       }
 
-      if (!await CreateTicket(ticket)) { transaction.Dispose(); return false; }
+      if (!await CreateTicket(ticket)) {
+                await transaction.RollbackAsync();
+                await transaction.DisposeAsync();
+                Console.WriteLine("ERROR Adding Ticket: Rolled BACKed Changes !!");
+                return false;
+      }
+
       ticket.TicketNo = ticket.Id;
-      if (!await _revenueService.AddTicketSaleAsync(ticket)) { transaction.Dispose(); return false; }
-      if (!await _printerService.PrintTicket(ticket)) { transaction.Commit(); return false; }
+
+      if (!await _revenueService.AddTicketSaleAsync(ticket)) { 
+                await transaction.RollbackAsync();
+                await transaction.DisposeAsync();
+                Console.WriteLine("ERROR Adding Revenue: Rolled BACKed Changes !!");
+                return false;
+       }
+      if (!await _printerService.PrintTicket(ticket)) {
+                //await transaction.RollbackAsync();
+                transaction.Commit();
+                await transaction.DisposeAsync();
+                Console.WriteLine("ERROR Printing Ticket: Rolled BACKed Changes !!");
+                return false;
+        }
 
       transaction.Commit();
       return true;
     }
     catch (Exception e)
     {
+      transaction.Rollback();
       transaction.Dispose();
       return false;
     }
   }
   public async Task<bool> CreateTicket(Ticket ticket)
   {
-    _localDbContext.Add(ticket);
-    return await _localDbContext.SaveChangesAsync() > 0;
+        Console.Write("Adding Ticket to Database: ");
+        //await using var _localDbContext = _localDbContextFactory.CreateDbContext();
+        _localDbContext.Add(ticket);
+        var result =  await _localDbContext.SaveChangesAsync() > 0;
+        Console.WriteLine("Ticket NO: " + ticket.Id);
+        return result;
   }
   public TicketPricingConfig GetPricingConfig()
   {
@@ -90,7 +117,9 @@ public class TicketService
 
   public async Task<Ticket?> VerifyTicket(string BarCode)
   {
-    return _localDbContext.Tickets
+        //var _localDbContext = _localDbContextFactory.CreateDbContext();
+
+        return _localDbContext.Tickets
         .Where(x => x.BarCodeData == BarCode)
         .Where(x => x.TimeStamp.Day == DateTime.Now.Day)
         .FirstOrDefault();

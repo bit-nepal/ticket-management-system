@@ -1,21 +1,23 @@
 ﻿@page "/list-of-tickets";
-<h3>ListOfTicketSales</h3>
+<h3>List Of Ticket Sales</h3>
 
 @page "/tickets"
 @using tms.Data
 @inject TicketService TicketService
 
+<Offcanvas @ref="offcanvas" Size="OffcanvasSize.Small" UseStaticBackdrop="true" style="width: 0px; height:0px;" />
+
 <Grid TItem="tms.Data.Ticket"
-      Class="table table-hover table-bordered table-striped"
-      DataProvider="TicketsDataProvider"
-      AllowFiltering="true"
-      AllowPaging="true"
-      PageSize="5"
-      AllowSorting="true"
-      AllowSelection="false"
-      SelectionMode="GridSelectionMode.Multiple"
-      SelectedItemsChanged="OnSelectedItemsChanged"
-      Responsive="true">
+Class="table table-hover table-bordered table-striped"
+DataProvider="TicketsDataProvider"
+AllowFiltering="true"
+AllowPaging="true"
+PageSize="9"
+AllowSorting="true"
+AllowSelection="false"
+SelectionMode="GridSelectionMode.Multiple"
+SelectedItemsChanged="OnSelectedItemsChanged"
+Responsive="true">
 
     <GridColumns>
         <GridColumn TItem="tms.Data.Ticket" HeaderText="Ticket No" PropertyName="TicketNo" SortKeySelector="item => item.TicketNo">
@@ -45,16 +47,18 @@
 
 
 @code {
+    private Offcanvas? offcanvas;
     private IEnumerable<tms.Data.Ticket> tickets = Enumerable.Empty<tms.Data.Ticket>();
     private HashSet<tms.Data.Ticket> selectedTickets = new();
 
     private async Task<GridDataProviderResult<tms.Data.Ticket>> TicketsDataProvider(GridDataProviderRequest<tms.Data.Ticket> request)
     {
+        if(offcanvas is not null)  await offcanvas.ShowAsync();
         if (tickets is null || !tickets.Any()) // Load tickets only once
         {
             tickets = await TicketService.GetTicketsAsync();
         }
-
+        if (offcanvas is not null) await offcanvas.HideAsync();
         return await Task.FromResult(request.ApplyTo(tickets));
     }
 

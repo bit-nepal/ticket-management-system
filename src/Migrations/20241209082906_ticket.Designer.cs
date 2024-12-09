@@ -11,8 +11,8 @@ using tms.Data.Context;
 namespace tms.Migrations
 {
     [DbContext(typeof(LocalDbContext))]
-    [Migration("20241205074900_ticket3")]
-    partial class ticket3
+    [Migration("20241209082906_ticket")]
+    partial class ticket
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,10 +158,6 @@ namespace tms.Migrations
                     b.Property<int>("Nationality")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("NepaliDate")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("NoOfPeople")
                         .HasColumnType("INTEGER");
 
@@ -245,6 +241,34 @@ namespace tms.Migrations
                         .IsRequired();
 
                     b.Navigation("DailyRevenue");
+                });
+
+            modelBuilder.Entity("tms.Data.Ticket", b =>
+                {
+                    b.OwnsOne("NepaliDate", "NepaliDate", b1 =>
+                        {
+                            b1.Property<int>("TicketId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("Day")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("Month")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<int>("Year")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("TicketId");
+
+                            b1.ToTable("Tickets");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TicketId");
+                        });
+
+                    b.Navigation("NepaliDate")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DailyRevenue", b =>
