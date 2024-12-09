@@ -1,19 +1,26 @@
 ﻿@inherits LayoutComponentBase
+@using System.Threading
+@inject DateConversionService dateConversionService;
+@implements IDisposable
+<PageTitle> HI- TMS</PageTitle>
 
 <div class="bb-page" >
-    <Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
     <Sidebar  @ref="sidebar"
-             ImageSrc="HubizenLogoWhite.png"
-             Title="HI-TMS"
-             DataProvider="SidebarDataProvider" 
-             Class="no-print"
-             />
+    ImageSrc="HubizenLogoWhite.png"
+    Title="HI-TMS"
+    DataProvider="SidebarDataProvider" 
+    Class="no-print"
+    />
 
     @* style="height:100vh;" *@
-    <main >
+    <main > 
         <div class="bb-top-row px-4 d-flex flex-column justify-content-around navbar-brand no-print">
-            <span class="company-name mt-2">National Art Museum</span> 
-            <span class="h6"> Bhaktapur, Nepal</span>
+            <span class="company-name mt-2">@Constants.MUSEUM_NAME_ENGLISH</span>
+            <span class="h6"> @Constants.MUSEUM_ADDRESS_CITY_ENGLISH, @Constants.MUSEUM_ADDRESS_DISTRICT_ENGLISH</span>
+            <div class="timer"> 
+            <p style="position:fixed; right:2%; top:0.5%;">@nepaliDate</p>
+            <p style="position:fixed; right:2%; top:4%;">@Time</p>
+            </div>
         </div>
         @* style="height: calc(100vh - 3.5rem); *@
         <article class="content px-4 d-flex "  style="justify-content:center;align-items:center;">
@@ -21,42 +28,52 @@
         </article>
     </main>
 </div>
-
+<Toasts class="p-3" AutoHide="true" Delay="4000" Placement="ToastsPlacement.TopRight" />
 
 <style>
     :root{
-        --bb-sidebar-top-row-background-color: #2460b9;
-        --bb-sidebar-nav-item-text-active-color-rgb: 0,0,139;
-        --bb-sidebar-nav-item-text-hover-color: rgba(var(--bb-sidebar-nav-item-text-active-color-rgb),0.9);
+    --bb-sidebar-top-row-background-color: #2460b9;
+    --bb-sidebar-nav-item-text-active-color-rgb: 0,0,139;
+    --bb-sidebar-nav-item-text-hover-color: rgba(var(--bb-sidebar-nav-item-text-active-color-rgb),0.9);
     }
 
 
     .navbar-brand {
-        display: flex;
-        align-items: center;
-        padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
     }
 
     .company-name {
-        font-family: 'Poppins', sans-serif;
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: red; 
-        letter-spacing: 1px; /* Adds a slight spacing for elegance */
-        text-transform: uppercase; /* Makes the name stand out */
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: red; 
+    letter-spacing: 1px; /* Adds a slight spacing for elegance */
+    text-transform: uppercase; /* Makes the name stand out */
     }
 
-        /*Hover effect */
-        .company-name:hover {
-            color: #007bff; /* Subtle blue hover effect */
-            text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
+    /*Hover effect */
+    .company-name:hover {
+    color: #007bff; /* Subtle blue hover effect */
+    text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+   @@media (max-width: 576px){
+       .timer{
+           display:none;
+       }
+   }
 
 </style>
 
 @code {
     Sidebar sidebar;
     IEnumerable<NavItem> navItems;
+    string nepaliDate;
+    string Time;
+    Timer aTimer;
+
 
     private async Task<SidebarDataProviderResult> SidebarDataProvider(SidebarDataProviderRequest request)
     {
@@ -72,15 +89,30 @@
                    {
                        new NavItem { Id = "1", Href = "/ticket", IconName = IconName.TicketPerforatedFill, IconColor= IconColor.Primary ,Text = "Ticket"},
                        new NavItem { Id = "2", Href = "/verification", IconName = IconName.CheckSquareFill, IconColor= IconColor.Success , Text = "Verify Ticket"},
-                       new NavItem { Id = "3", Href = "/ticket-settings", IconName = IconName.CurrencyDollar, Text = "Ticket Settings"},
-                       new NavItem { Id = "4", Href = "/settings", IconName = IconName.GearFill, IconColor= IconColor.Secondary , Text = "Settings"},
-                       new NavItem { Id = "5", Href = "/change-password", IconName = IconName.HouseLockFill, IconColor= IconColor.Danger , Text = "Change Password"},
-                       new NavItem { Id = "6", Href = "/revenue", IconName = IconName.CurrencyBitcoin, IconColor= IconColor.Warning , Text = "Daily Revenue"},
-                       new NavItem { Id = "7", Href = "/settings", IconName = IconName.ArrowReturnLeft, IconColor= IconColor.Danger , Text = "Logout", Class="text-danger"},
+                       new NavItem { Id = "6", Href = "/list-of-tickets", IconName = IconName.FileTypeDoc, IconColor= IconColor.Warning , Text = "List of Tickets"},
+                       new NavItem { Id = "6", Href = "/revenue", IconName = IconName.Paperclip, IconColor= IconColor.Dark , Text = "Daily Revenue"},
                        new NavItem { Id = "8", Href = "https://www.hubizen.com", Text = " © Hubizen Innovations", Class="position-absolute bottom-0 start-0"}
                    };
 
         return navItems;
+    }
+    protected override void OnInitialized()
+    {
+        aTimer = new Timer(Tick, null, 0, 1000);
+    }
+
+    private void Tick(object _)
+    {
+        var currentEnglishDateTime = DateTime.Now;
+        var currentNepaliDate = dateConversionService.getCurrentDate();
+        nepaliDate = currentNepaliDate?.ToString();
+        Time = currentEnglishDateTime.ToLongTimeString();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        aTimer?.Dispose();
     }
 }
 

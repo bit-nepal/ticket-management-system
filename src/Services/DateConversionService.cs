@@ -9,9 +9,10 @@ public class DateConversionService
 
   public NepaliDate getCurrentDate()
   {
-    // return ConvertEnglishDateToNepaliDate(DateTime.Now);
-    return new NepaliDate() { Year = 2081, Month = (int)NepaliMonth.Falgun, Day = 24 };
-  }
+     return ConvertEnglishDateToNepaliDate(DateTime.Now);
+
+        //return new NepaliDate() { Year = 2081, Month = (int)NepaliMonth.Mangsir, Day = 21 };
+    }
   private Dictionary<int, NepaliYearData> InitializeDateMap()
   {
     return new Dictionary<int, NepaliYearData>

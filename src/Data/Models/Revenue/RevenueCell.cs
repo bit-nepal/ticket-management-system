@@ -10,4 +10,3 @@ public class RevenueCell
   public int DailyRevenueId { get; set; }
   public DailyRevenue DailyRevenue { get; set; } = null!;
 }
-

@@ -1,6 +1,7 @@
 ﻿@page "/verification"
 @inject TicketService ticketService;
 
+
 <Offcanvas 
 @ref="offcanvas" 
 UseStaticBackdrop="true" 
@@ -53,7 +54,7 @@ style="position:absolute;
                     @(ticket.AddOns.FirstOrDefault(x => x.AddOnType == AddOnType.VideoCamera)?.TotalPrice > 0 ? "✓" : "✕")
                 </li>
             }
-            }
+
         </ul>
     </Card>
 }
@@ -102,11 +103,18 @@ else
 
 
 </style>
+<div style="position:fixed; top:50%; left:50%">
+    <Spinner Type="SpinnerType.Dots" Size="SpinnerSize.ExtraLarge" Visible="@isLoading" />
+</div>
+
+<div style="position: fixed; bottom: 0; right:0;">
+    @barCodeData
+</div>
 
 
-Current value: @barCodeData
 @code{
     private bool IsValid;
+    private bool isLoading;
     private tms.Data.Ticket?  ticket;
     private string barCodeData;
     private Offcanvas? offcanvas;
@@ -129,6 +137,7 @@ Current value: @barCodeData
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
             await offcanvas.ShowAsync();
+            isLoading = true;
             ValidateBarCode();
         }
     }
@@ -139,6 +148,8 @@ Current value: @barCodeData
         ticket = await ticketService.VerifyTicket(barCodeData) ;
         IsValid = ticket is not null;
         barCodeData = String.Empty;
+        isLoading = false;
+
         if (offcanvas is not null)
         {
             await offcanvas.HideAsync();

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using tms.Data;
 namespace tms.Data.Context;
 public class LocalDbContext : DbContext
@@ -10,15 +11,18 @@ public class LocalDbContext : DbContext
   public DbSet<MonthlyRevenue> MonthlyRevenues { get; set; } = null!;
   public DbSet<YearlyRevenue> YearlyRevenues { get; set; } = null!;
   public DbSet<RevenueCell> RevenueCells { get; set; } = null!;
-
-  protected override void OnModelCreating(ModelBuilder modelBuilder)
-  {
-    modelBuilder.Entity<DailyRevenue>(entity =>
+   
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+     {
+        modelBuilder.Entity<DailyRevenue>(entity =>
        {
          entity.OwnsOne(d => d.DateBS); // Configures NepaliDate as a complex type
        });
 
-        modelBuilder.Entity<Ticket>(entity => entity.OwnsOne(d => d.NepaliDate));
+        modelBuilder.Entity<Ticket>(entity => {
+            entity.OwnsOne(d => d.NepaliDate);
+            });
+
     modelBuilder.Entity<DailyRevenue>()
         .HasOne(dr => dr.MonthlyRevenue)
         .WithMany(mr => mr.DailyRevenues)
